@@ -10,8 +10,8 @@ import os
 
 ### SETTINGS
 dataset_name = "wiki"
-use_prefix = True
-threshold = 1.6
+use_prefix = False
+threshold = 1.5
 
 ### CODE START
 save_to = dataset_name + ("_prefix.bin" if use_prefix else ".bin")
@@ -27,5 +27,5 @@ if not os.path.exists(save_to):
 # plot relationships
 with open(save_to, 'rb') as handle:
     relations = pickle.load(handle)
-
+print relations
 plot_relations(relations, threshold)
