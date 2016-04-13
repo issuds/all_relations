@@ -95,9 +95,9 @@ def Relation_Generalization(x,y):
     # train 
     params = []
     results = []
-    for neurons in [5,10,20,40]:
+    for neurons in [5,10,20,40,60]:
         for layers in [1,2,3,4]:
-            for i in range(10):
+            for i in range(100):
                 params.append((x, y, improvement_over_guessing, [neurons, layers]))
                 """results.append( train_evaluate((x, y, improvement_over_guessing, [neurons, layers])) );"""
     
