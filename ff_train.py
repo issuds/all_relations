@@ -16,7 +16,7 @@ def split_matrix(x):
     """
     X, Xvt = np.array_split(x, 2)
     Y, Yvt = np.array_split(y, 2)
-    
+     
     Xv, Xt = np.array_split(Xvt, 2)
     Yv, Yt = np.array_split(Yvt, 2)  
     """
