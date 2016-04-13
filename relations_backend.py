@@ -10,8 +10,7 @@ from ff_train import train_evaluate
 import networkx as nx
 import matplotlib.pyplot as plt
 import time
-
-from multiprocessing import Process, Manager
+from multiprocessing import Pool
 
 def plot_relations(relations, thr):
     
@@ -32,7 +31,7 @@ def plot_relations(relations, thr):
     
     # labels
     nx.draw_networkx_labels(G,pos,font_size=20,font_family='sans-serif')
-    nx.draw_networkx_edge_labels(G,pos,font_size=10,font_family='sans-serif')
+    #nx.draw_networkx_edge_labels(G,pos,font_size=10,font_family='sans-serif')
     
     plt.axis('off')
     plt.show() # display
@@ -92,16 +91,29 @@ def Relation_Generalization(x,y):
     # x : input matrix
     # y : output vector
     
+    
     # train 
-    best_val = 0.0;
-    best_tst = 0;
+    params = []
+    results = []
     for neurons in [5,10,20,40]:
         for layers in [1,2,3,4]:
-            val, tst = train_evaluate(x, y, improvement_over_guessing, [neurons, layers])
-            if val > best_val:
-                best_val = val;
-                best_tst = tst;
-        
+            for i in range(10):
+                params.append((x, y, improvement_over_guessing, [neurons, layers]))
+                """results.append( train_evaluate((x, y, improvement_over_guessing, [neurons, layers])) );"""
+    
+    pool = Pool(12)
+    results = pool.map(train_evaluate, params)
+    pool.close()
+    
+    best_val = 0.0;
+    best_tst = 0;
+    
+    for val, tst in results:
+        if val > best_val:
+            best_val = val;
+            best_tst = tst;
+    
+    
     return best_tst;
 
 def Relation_Generalization_WRP(X, Y, procnum, return_dict):
@@ -113,47 +125,30 @@ def Extract_1_to_1_Relations(concepts, prefix = None):
     
     result = [];
     
-    idx = 1;
-    N = len(concepts);
+    idx = 0;
+    N = len(concepts) ** 2;
     avg_time = None
-    
-    manager = Manager()
     
     for A in concepts.keys():
         
-        return_dict = manager.dict()
-        jobs = []
-        
-        start_time = time.time()
-        
         for B in concepts.keys():
-            
+                        
             if A == B:
-                continue;
+                result.append([A,B, 1000.0 ]);
+                continue
+            
+            start_time = time.time()
             
             X = concepts[A];
             Y = concepts[B];
+            W = Relation_Generalization(X, Y)
+            result.append([A, B, W]);
+        
+            est_time = (time.time() - start_time)
+            avg_time = est_time if avg_time is None else avg_time*0.8 + 0.2*est_time
+            N = N - 1
             
-            if not (prefix is None):
-                X = np.column_stack((prefix, X))
-            
-            p = Process(target=Relation_Generalization_WRP, args=(X,Y,B,return_dict))
-            jobs.append(p)
-            p.start()
+            print "relation",A,"->",B,":",W,"; est. time:", avg_time*N
                     
-        for proc in jobs:
-            proc.join()
-        
-        for B in return_dict.keys():      
-            result.append([A,B, return_dict[B] ]);
-        
-        #print "relation",A,"->",B,":",w,";",idx,"/",N,"est. time:", avg_time
-        #idx = idx + 1
-        
-        N = N - 1
-        
-        est_time = (time.time() - start_time)
-        avg_time = est_time if avg_time is None else avg_time*0.8 + 0.2*est_time
-        print "est. time:", avg_time*N
     
     return result

@@ -10,17 +10,32 @@ from feedforward import ffnn
 import numpy as np
 import tensorflow as tf
 
-def train_evaluate(x,y, measure, params):
-    # train and evaluate 2 layer nn
+def split_matrix(x):
+    # does data split
     
-    sess = tf.InteractiveSession()
-    
+    """
     X, Xvt = np.array_split(x, 2)
     Y, Yvt = np.array_split(y, 2)
     
     Xv, Xt = np.array_split(Xvt, 2)
     Yv, Yt = np.array_split(Yvt, 2)  
+    """
     
+    len_sp = int( len(x) / 3.0 )
+    
+    X, Xv, Xt = x[:len_sp], x[len_sp:len_sp*2], x[len_sp*2:]
+    
+    return X, Xv, Xt
+    
+
+def train_evaluate((x,y, measure, params)):
+    # train and evaluate 2 layer nn
+    
+    sess = tf.InteractiveSession()
+    
+    X, Xv, Xt = split_matrix(x)
+    Y, Yv, Yt = split_matrix(y)
+        
     # normalize
     xm = np.mean(X, axis = 0)
     ym = np.mean(Y, axis = 0)

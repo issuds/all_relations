@@ -27,5 +27,19 @@ if not os.path.exists(save_to):
 # plot relationships
 with open(save_to, 'rb') as handle:
     relations = pickle.load(handle)
+
 print relations
+
+fid = ""
+pr = ""
+
+for item in relations:
+    A, B, W = item
+    if A != fid:
+        print pr
+        pr = A;
+        fid = A
+    pr = pr + "," + ("%.2f" % W)
+print pr
+
 plot_relations(relations, threshold)
