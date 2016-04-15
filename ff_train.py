@@ -10,23 +10,12 @@ from feedforward import ffnn
 import numpy as np
 import tensorflow as tf
 
-def split_matrix(x):
-    # does data split
-    
+
+def split_matrix(X, tr = 0.5, vl = 0.25):
+    """ splits data into training, validation and testing parts
     """
-    X, Xvt = np.array_split(x, 2)
-    Y, Yvt = np.array_split(y, 2)
-     
-    Xv, Xt = np.array_split(Xvt, 2)
-    Yv, Yt = np.array_split(Yvt, 2)  
-    """
-    
-    len_sp = int( len(x) / 3.0 )
-    
-    X, Xv, Xt = x[:len_sp], x[len_sp:len_sp*2], x[len_sp*2:]
-    
-    return X, Xv, Xt
-    
+    X, Xv, Xt = X[:len(X)*tr], X[len(X)*tr:len(X)*(tr + vl)], X[len(X)*(tr + vl):]
+    return X, Xv, Xt      
 
 def train_evaluate((x,y, measure, params)):
     # train and evaluate 2 layer nn
