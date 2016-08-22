@@ -71,7 +71,8 @@ def Read_CSV_Columns(filename):
     return result
 
 def diff_measure(Y, Yp):
-    return np.mean( np.abs( Y - Yp ) )
+    #return np.mean( np.abs( Y - Yp ) )
+    return np.sqrt(np.mean((Y - Yp)**2))
 
 def improvement_over_guessing(Ytr, Ytst, Ypr):
     pr_obj = diff_measure(Ytst, Ypr)

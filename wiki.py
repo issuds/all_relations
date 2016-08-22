@@ -37,7 +37,7 @@ for item in relations:
     A, B, W = item
     if A != fid:
         print pr
-        pr = A;
+        pr = A
         fid = A
     pr = pr + "," + ("%.2f" % W)
 print pr
