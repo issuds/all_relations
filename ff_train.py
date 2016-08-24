@@ -128,10 +128,10 @@ def fit_report_SVR(params):
         regr.fit(X, Y[:, column])
 
         Yp = regr.predict(Xv)
-        vals.append(measure(Y, Yv, Yp))
+        vals.append(measure(Y[:, column], Yv[:, column], Yp))
 
         Yp = regr.predict(Xt)
-        tsts.append(measure(Y, Yt, Yp))
+        tsts.append(measure(Y[:, column], Yt[:, column], Yp))
 
     return np.mean(vals), np.mean(tsts)
 

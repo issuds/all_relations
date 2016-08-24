@@ -109,17 +109,16 @@ def Relation_Generalization(x,y, approximator):
                         'params': {'neurons': neurons, 'layers': layers}
                     })
     elif approximator == "SVR":
-        for C in np.linspace(-3,3,10) ** 10:
-            for gamma in np.linspace(-3, 0, 5) ** 10:
-                for eps in np.linspace(-3, 0, 5) ** 10:
-                    for i in range(10):
-                        params.append({
-                            'class':approximator,
-                            'x':x,
-                            'y':y,
-                            'performance measure': improvement_over_guessing,
-                            'params': {'C': C, 'gamma': gamma, 'epsilon': eps}
-                        })
+        for C in 10 ** np.linspace(-3,3,10):
+            for gamma in 10 ** np.linspace(-3, 0, 5):
+                for eps in 10 ** np.linspace(-3, 0, 5):
+                    params.append({
+                        'class':approximator,
+                        'x':x,
+                        'y':y,
+                        'performance measure': improvement_over_guessing,
+                        'params': {'C': C, 'gamma': gamma, 'epsilon': eps}
+                    })
     else:
         raise BaseException('approximator type not understood')
     
