@@ -12,6 +12,7 @@ import os
 dataset_name = "wiki"
 use_prefix = False
 threshold = 1.5
+approximator = "SVR"
 
 ### CODE START
 save_to = dataset_name + ("_prefix.bin" if use_prefix else ".bin")
@@ -19,7 +20,7 @@ save_to = dataset_name + ("_prefix.bin" if use_prefix else ".bin")
 # establish relationships if not given
 if not os.path.exists(save_to):
     c, p = read_dataset(dataset_name, use_prefix)
-    relations = Extract_1_to_1_Relations(c, p)
+    relations = Extract_1_to_1_Relations(c, approximator, p)
     
     with open(save_to, 'wb') as handle:
         pickle.dump(relations, handle)

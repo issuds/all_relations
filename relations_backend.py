@@ -87,7 +87,7 @@ def improvement_over_guessing(Ytr, Ytst, Ypr):
     
     return rnd_obj / pr_obj
 
-def Relation_Generalization(x,y):
+def Relation_Generalization(x,y, approximator):
     # establishes how well relation between inputs and outputs can generalize
     # x : input matrix
     # y : output vector
@@ -96,11 +96,32 @@ def Relation_Generalization(x,y):
     # train 
     params = []
     results = []
-    for neurons in [5,10,20,40,60]:
-        for layers in [1,2,3,4]:
-            for i in range(10):
-                params.append((x, y, improvement_over_guessing, [neurons, layers]))
-                """results.append( train_evaluate((x, y, improvement_over_guessing, [neurons, layers])) );"""
+
+    if approximator == "ANN":
+        for neurons in [5,10,20,40,60]:
+            for layers in [1,2,3,4]:
+                for i in range(10):
+                    params.append({
+                        'class':approximator,
+                        'x':x,
+                        'y':y,
+                        'performance measure': improvement_over_guessing,
+                        'params': {'neurons': neurons, 'layers': layers}
+                    })
+    elif approximator == "SVR":
+        for C in np.linspace(-3,3,10) ** 10:
+            for gamma in np.linspace(-3, 0, 5) ** 10:
+                for eps in np.linspace(-3, 0, 5) ** 10:
+                    for i in range(10):
+                        params.append({
+                            'class':approximator,
+                            'x':x,
+                            'y':y,
+                            'performance measure': improvement_over_guessing,
+                            'params': {'C': C, 'gamma': gamma, 'epsilon': eps}
+                        })
+    else:
+        raise BaseException('approximator type not understood')
     
     pool = Pool(12)
     results = pool.map(train_evaluate, params)
@@ -121,7 +142,7 @@ def Relation_Generalization_WRP(X, Y, procnum, return_dict):
     w = Relation_Generalization(X, Y)
     return_dict[procnum] = w;
 
-def Extract_1_to_1_Relations(concepts, prefix = None):
+def Extract_1_to_1_Relations(concepts, approximator, prefix = None):
     # return arrays of size 3 of the form colx, coly, relation strength
     
     result = [];
@@ -142,7 +163,7 @@ def Extract_1_to_1_Relations(concepts, prefix = None):
             
             X = concepts[A];
             Y = concepts[B];
-            W = Relation_Generalization(X, Y)
+            W = Relation_Generalization(X, Y, approximator)
             result.append([A, B, W]);
         
             est_time = (time.time() - start_time)
