@@ -5,7 +5,7 @@ Contains functions for processing of all relations
 import csv
 import numpy as np
 from sklearn.svm import SVR
-from ff_train import train_evaluate
+from fit_approximator import train_evaluate
 
 import networkx as nx
 import matplotlib.pyplot as plt
@@ -122,7 +122,7 @@ def Relation_Generalization(x,y, approximator):
     else:
         raise BaseException('approximator type not understood')
     
-    pool = Pool(12)
+    pool = Pool(1)
     results = pool.map(train_evaluate, params)
     pool.close()
     

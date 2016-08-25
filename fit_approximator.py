@@ -128,12 +128,18 @@ def fit_report_SVR(params):
         regr.fit(X, Y[:, column])
 
         Yp = regr.predict(Xv)
-        vals.append(measure(Y[:, column], Yv[:, column], Yp))
+        vals.append(Yp)
 
         Yp = regr.predict(Xt)
-        tsts.append(measure(Y[:, column], Yt[:, column], Yp))
+        tsts.append(Yp)
 
-    return np.mean(vals), np.mean(tsts)
+    Yp = np.column_stack(vals)
+    val_measure = measure(Y, Yv, Yp)
+
+    Yp = np.column_stack(tsts)
+    tst_measure = measure(Y, Yt, Yp)
+
+    return val_measure, tst_measure
 
 
 def train_evaluate((params)):
