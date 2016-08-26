@@ -10,6 +10,11 @@ from feedforward import ffnn
 import numpy as np
 import tensorflow as tf
 
+# some names
+ANN_approximator = "ANN"
+SVR_approximator = "SVR"
+AdaBoost_approximator = "AdaBoost"
+KNN_approximator = "KNN"
 
 def split_matrix(X, tr = 0.5, vl = 0.25):
     """ splits data into training, validation and testing parts
@@ -110,8 +115,15 @@ def fit_report_ANN(params):
     return best_acc, test_acc
 
 from sklearn.svm import SVR
+from sklearn.ensemble import AdaBoostRegressor
+from sklearn.neighbors import KNeighborsRegressor
 
-def fit_report_SVR(params):
+accepted_sklearn_classes = {}
+accepted_sklearn_classes[SVR_approximator] = SVR
+accepted_sklearn_classes[AdaBoost_approximator] = AdaBoostRegressor
+accepted_sklearn_classes[KNN_approximator] = KNeighborsRegressor
+
+def fit_report_sklearn(params, apx):
 
     X, Y, Xv, Yv, Xt, Yt = prepare_data(params['x'], params['y'])
     measure = params['performance measure']
@@ -123,8 +135,11 @@ def fit_report_SVR(params):
     vals = []
     tsts = []
 
+    if not apx in accepted_sklearn_classes:
+        raise BaseException("This sklearn model is not added to accepted sklearn models. Please add it. ")
+
     for column in range(Y.shape[1]):
-        regr = SVR(**specs)
+        regr = accepted_sklearn_classes[apx](**specs)
         regr.fit(X, Y[:, column])
 
         Yp = regr.predict(Xv)
@@ -146,12 +161,10 @@ def train_evaluate((params)):
     # train and evaluate 2 layer nn
     approximator = params['class']
 
-    if approximator == "SVR":
-        return fit_report_SVR(params)
-    elif approximator == "ANN":
+    if approximator == ANN_approximator:
         return fit_report_ANN(params)
     else:
-        raise BaseException('Unknown type of approximator in the evaluation procedure!')
+        return fit_report_sklearn(params, approximator)
     
     
     

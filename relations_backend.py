@@ -5,12 +5,14 @@ Contains functions for processing of all relations
 import csv
 import numpy as np
 from sklearn.svm import SVR
-from fit_approximator import train_evaluate
+import fit_approximator as fx
 
 import networkx as nx
 import matplotlib.pyplot as plt
 import time
 from multiprocessing import Pool
+
+
 
 def plot_relations(relations, thr):
     
@@ -97,7 +99,7 @@ def Relation_Generalization(x,y, approximator):
     params = []
     results = []
 
-    if approximator == "ANN":
+    if approximator == fx.ANN_approximator:
         for neurons in [5,10,20,40,60]:
             for layers in [1,2,3,4]:
                 for i in range(10):
@@ -108,7 +110,7 @@ def Relation_Generalization(x,y, approximator):
                         'performance measure': improvement_over_guessing,
                         'params': {'neurons': neurons, 'layers': layers}
                     })
-    elif approximator == "SVR":
+    elif approximator == fx.SVR_approximator:
         for C in 10 ** np.linspace(-3,3,10):
             for gamma in 10 ** np.linspace(-3, 0, 5):
                 for eps in 10 ** np.linspace(-3, 0, 5):
@@ -119,11 +121,32 @@ def Relation_Generalization(x,y, approximator):
                         'performance measure': improvement_over_guessing,
                         'params': {'C': C, 'gamma': gamma, 'epsilon': eps}
                     })
+    elif approximator == fx.AdaBoost_approximator:
+        for pw in range(1, 10):
+            for gamma in 10 ** np.linspace(-2, 0, 4):
+                params.append({
+                    'class':approximator,
+                    'x':x,
+                    'y':y,
+                    'performance measure': improvement_over_guessing,
+                    'params': {'n_estimators': 2 ** pw, 'learning_rate': gamma}
+                })
+    elif approximator == fx.KNN_approximator:
+        for k in range(1, 100, 5):
+            for msr in ['minkowski']:
+                for weights in ['uniform', 'distance']:
+                    params.append({
+                        'class':approximator,
+                        'x':x,
+                        'y':y,
+                        'performance measure': improvement_over_guessing,
+                        'params': {'n_neighbors': k, 'metric': msr, 'weights': weights}
+                    })
     else:
         raise BaseException('approximator type not understood')
     
     pool = Pool(1)
-    results = pool.map(train_evaluate, params)
+    results = pool.map(fx.train_evaluate, params)
     pool.close()
     
     best_val = 0.0;
