@@ -111,9 +111,9 @@ def Relation_Generalization(x,y, approximator):
                         'params': {'neurons': neurons, 'layers': layers}
                     })
     elif approximator == fx.SVR_approximator:
-        for C in 2 ** np.arange(-10,11):
-            for gamma in 2 ** np.arange(-10,10,2):
-                for eps in 2 ** np.arange(-10,10,2):
+        for C in 2.0 ** np.array([-10,-8,-6,-4,-2,0,2,4,6,8,10]):
+            for gamma in 2.0 ** np.array([-10,-8,-6,-4,-2,0,2,4,6,8,10]):
+                for eps in 2.0 ** np.array([-10,-8,-6,-4,-2,0]):
                     params.append({
                         'class':approximator,
                         'x':x,
@@ -122,14 +122,14 @@ def Relation_Generalization(x,y, approximator):
                         'params': {'C': C, 'gamma': gamma, 'epsilon': eps}
                     })
     elif approximator == fx.AdaBoost_approximator:
-        for pw in 2 ** np.arange(1,10):
-            for gamma in 2 ** np.arange(-10,10,2):
+        for pw in [2,3,4,5,6,7,8,9,10]:
+            for lr in 2.0 ** np.array([-10,-8,-6,-4,-2,0,2,4,6,8,10]):
                 params.append({
                     'class':approximator,
                     'x':x,
                     'y':y,
                     'performance measure': improvement_over_guessing,
-                    'params': {'n_estimators': 2 ** pw, 'learning_rate': gamma}
+                    'params': {'n_estimators': 2 ** pw, 'learning_rate': lr}
                 })
 
     elif approximator == fx.KNN_approximator:
@@ -146,7 +146,7 @@ def Relation_Generalization(x,y, approximator):
     else:
         raise BaseException('approximator type not understood')
     
-    pool = Pool(1)
+    pool = Pool(12)
     results = pool.map(fx.train_evaluate, params)
     pool.close()
     
