@@ -112,7 +112,7 @@ def fit_report_ANN(params):
 
     sess.close()
 
-    return best_acc, test_acc
+    return best_acc, test_acc, specs
 
 from sklearn.svm import SVR
 from sklearn.ensemble import AdaBoostRegressor
@@ -154,7 +154,7 @@ def fit_report_sklearn(params, apx):
     Yp = np.column_stack(tsts)
     tst_measure = measure(Y, Yt, Yp)
 
-    return val_measure, tst_measure
+    return val_measure, tst_measure, specs
 
 
 def train_evaluate((params)):

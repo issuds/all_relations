@@ -14,8 +14,7 @@ dataset_name = "wiki"
 use_prefix = False
 threshold = 1.5
 
-#for approximator in [fx.KNN_approximator, fx.SVR_approximator, fx.AdaBoost_approximator, fx.ANN_approximator]:
-for approximator in [fx.SVR_approximator, fx.AdaBoost_approximator, fx.ANN_approximator]:
+for approximator in [fx.KNN_approximator, fx.SVR_approximator, fx.AdaBoost_approximator, fx.ANN_approximator]:
 
     ### CODE START
     fname = dataset_name + "_" + approximator + ("_prefix" if use_prefix else "")

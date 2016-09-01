@@ -80,7 +80,7 @@ def improvement_over_guessing(Ytr, Ytst, Ypr):
     pr_obj = diff_measure(Ytst, Ypr)
     
     rnd_objs = []
-    for i in range(10):
+    for i in range(100):
         I = np.random.choice(len(Ytr), len(Ytst))
         Yrnd = Ytr[I,]
         rnd_objs.append( diff_measure(Ytst, Yrnd) )
@@ -152,8 +152,37 @@ def Relation_Generalization(x,y, approximator):
     
     best_val = 0.0;
     best_tst = 0;
-    
-    for val, tst in results:
+
+    """
+    avg = { }
+    for val, tst, spcs in results:
+        key = spcs['n_neighbors']
+        if key not in avg:
+            avg[key] = []
+        if spcs['weights'] == 'uniform':
+            avg[key].append(val)
+
+    x, y = [], []
+
+    for key in avg:
+        x.append(key)
+        y.append(np.max(avg[key]))
+
+    from matplotlib import pyplot as plt
+
+    plt.figure(figsize=(4,3))
+    plt.scatter(x, y)
+    plt.xlabel("Number of neighbors")
+    plt.ylabel("IRG")
+
+    plt.axis([-10, 310, 1.1, 1.6])
+
+    plt.grid()
+    plt.show()
+    """
+
+    for val, tst, spcs in results:
+        # spcs is necessary for plots if any
         if val > best_val:
             best_val = val;
             best_tst = tst;
