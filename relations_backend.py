@@ -100,9 +100,9 @@ def Relation_Generalization(x,y, approximator):
     results = []
 
     if approximator == fx.ANN_approximator:
-        for neurons in [5,10,20,40,60]:
-            for layers in [1,2,3,4]:
-                for i in range(10):
+        for neurons in 2 ** np.arange(1,10):
+            for layers in [1,2,3,4,5]:
+                for i in range(3):
                     params.append({
                         'class':approximator,
                         'x':x,
@@ -111,9 +111,9 @@ def Relation_Generalization(x,y, approximator):
                         'params': {'neurons': neurons, 'layers': layers}
                     })
     elif approximator == fx.SVR_approximator:
-        for C in 10 ** np.linspace(-3,3,10):
-            for gamma in 10 ** np.linspace(-3, 0, 5):
-                for eps in 10 ** np.linspace(-3, 0, 5):
+        for C in 2 ** np.arange(-10,11):
+            for gamma in 2 ** np.arange(-10,10,2):
+                for eps in 2 ** np.arange(-10,10,2):
                     params.append({
                         'class':approximator,
                         'x':x,
@@ -122,8 +122,8 @@ def Relation_Generalization(x,y, approximator):
                         'params': {'C': C, 'gamma': gamma, 'epsilon': eps}
                     })
     elif approximator == fx.AdaBoost_approximator:
-        for pw in range(1, 10):
-            for gamma in 10 ** np.linspace(-2, 0, 4):
+        for pw in 2 ** np.arange(1,10):
+            for gamma in 2 ** np.arange(-10,10,2):
                 params.append({
                     'class':approximator,
                     'x':x,
@@ -131,8 +131,9 @@ def Relation_Generalization(x,y, approximator):
                     'performance measure': improvement_over_guessing,
                     'params': {'n_estimators': 2 ** pw, 'learning_rate': gamma}
                 })
+
     elif approximator == fx.KNN_approximator:
-        for k in range(1, 100, 5):
+        for k in range(1, len(x) // 2, 5):
             for msr in ['minkowski']:
                 for weights in ['uniform', 'distance']:
                     params.append({
