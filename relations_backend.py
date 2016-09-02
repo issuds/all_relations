@@ -89,6 +89,17 @@ def improvement_over_guessing(Ytr, Ytst, Ypr):
     
     return rnd_obj / pr_obj
 
+def select_best_from(params):
+
+    pool = Pool(12)
+    results = pool.map(fx.train_evaluate, params)
+    pool.close()
+
+    val, tst, spc = max(results, key=lambda r: r[0])
+
+    return val, tst, spc
+
+
 def Relation_Generalization(x,y, approximator):
     # establishes how well relation between inputs and outputs can generalize
     # x : input matrix
@@ -97,7 +108,6 @@ def Relation_Generalization(x,y, approximator):
     
     # train 
     params = []
-    results = []
 
     if approximator == fx.ANN_approximator:
         for neurons in 2 ** np.arange(1,10):
@@ -110,85 +120,93 @@ def Relation_Generalization(x,y, approximator):
                         'performance measure': improvement_over_guessing,
                         'params': {'neurons': neurons, 'layers': layers}
                     })
-    elif approximator == fx.SVR_approximator:
-        for C in 2.0 ** np.array([-10,-8,-6,-4,-2,0,2,4,6,8,10]):
-            for gamma in 2.0 ** np.array([-10,-8,-6,-4,-2,0,2,4,6,8,10]):
-                for eps in 2.0 ** np.array([-10,-8,-6,-4,-2,0]):
-                    params.append({
-                        'class':approximator,
-                        'x':x,
-                        'y':y,
-                        'performance measure': improvement_over_guessing,
-                        'params': {'C': C, 'gamma': gamma, 'epsilon': eps}
-                    })
-    elif approximator == fx.AdaBoost_approximator:
-        for pw in [2,3,4,5,6,7,8,9,10]:
-            for lr in 2.0 ** np.array([-10,-8,-6,-4,-2,0,2,4,6,8,10]):
-                params.append({
+    else: # select parameters for every output separately, and then evalueate them all together
+
+        param = {
                     'class':approximator,
                     'x':x,
                     'y':y,
                     'performance measure': improvement_over_guessing,
-                    'params': {'n_estimators': 2 ** pw, 'learning_rate': lr}
-                })
+                    'params': []
+                }
 
-    elif approximator == fx.KNN_approximator:
-        for k in range(1, len(x) // 2, 5):
-            for msr in ['minkowski']:
-                for weights in ['uniform', 'distance']:
-                    params.append({
-                        'class':approximator,
-                        'x':x,
-                        'y':y,
-                        'performance measure': improvement_over_guessing,
-                        'params': {'n_neighbors': k, 'metric': msr, 'weights': weights}
-                    })
-    else:
-        raise BaseException('approximator type not understood')
+        for i in range(y.shape[1]):
+
+            otp = y[:, [i]] # select output column
+
+            # select here parameters for every entry in output vector
+            if approximator == fx.SVR_approximator:
+                for C in 2.0 ** np.array([-10,-8,-6,-4,-2,0,2,4,6,8,10]):
+                    for gamma in 2.0 ** np.array([-10,-8,-6,-4,-2,0,2,4,6,8,10]):
+                        for eps in 2.0 ** np.array([-10,-8,-6,-4,-2,0]):
+                            params.append({
+                                'class':approximator,
+                                'x':x,
+                                'y':otp,
+                                'performance measure': improvement_over_guessing,
+                                'params': [{'C': C, 'gamma': gamma, 'epsilon': eps}]
+                            })
+            elif approximator == fx.AdaBoost_approximator:
+                for pw in [2,3,4,5,6,7,8,9,10]:
+                    for lr in 2.0 ** np.array([-10,-8,-6,-4,-2,0,2,4,6,8,10]):
+                        params.append({
+                            'class':approximator,
+                            'x':x,
+                            'y':otp,
+                            'performance measure': improvement_over_guessing,
+                            'params': [{'n_estimators': 2 ** pw, 'learning_rate': lr}]
+                        })
+
+            elif approximator == fx.KNN_approximator:
+                for k in range(1, len(x) // 2, 5):
+                    for msr in ['minkowski']:
+                        for weights in ['uniform', 'distance']:
+                            params.append({
+                                'class':approximator,
+                                'x':x,
+                                'y':otp,
+                                'performance measure': improvement_over_guessing,
+                                'params': [{'n_neighbors': k, 'metric': msr, 'weights': weights}]
+                            })
+            else:
+                raise BaseException('approximator type not understood')
+
+            val, tst, spc = select_best_from(params)
+            param['params'].extend(spc)
+
+        params = [param]
+
+    val, tst, spc = select_best_from(params)
     
-    pool = Pool(12)
-    results = pool.map(fx.train_evaluate, params)
-    pool.close()
-    
-    best_val = 0.0;
-    best_tst = 0;
+    return tst;
 
-    """
-    avg = { }
-    for val, tst, spcs in results:
-        key = spcs['n_neighbors']
-        if key not in avg:
-            avg[key] = []
-        if spcs['weights'] == 'uniform':
-            avg[key].append(val)
+"""
+avg = { }
+for val, tst, spcs in results:
+    key = spcs['n_neighbors']
+    if key not in avg:
+        avg[key] = []
+    if spcs['weights'] == 'uniform':
+        avg[key].append(val)
 
-    x, y = [], []
+x, y = [], []
 
-    for key in avg:
-        x.append(key)
-        y.append(np.max(avg[key]))
+for key in avg:
+    x.append(key)
+    y.append(np.max(avg[key]))
 
-    from matplotlib import pyplot as plt
+from matplotlib import pyplot as plt
 
-    plt.figure(figsize=(4,3))
-    plt.scatter(x, y)
-    plt.xlabel("Number of neighbors")
-    plt.ylabel("IRG")
+plt.figure(figsize=(4,3))
+plt.scatter(x, y)
+plt.xlabel("Number of neighbors")
+plt.ylabel("IRG")
 
-    plt.axis([-10, 310, 1.1, 1.6])
+plt.axis([-10, 310, 1.1, 1.6])
 
-    plt.grid()
-    plt.show()
-    """
-
-    for val, tst, spcs in results:
-        # spcs is necessary for plots if any
-        if val > best_val:
-            best_val = val;
-            best_tst = tst;
-    
-    
-    return best_tst;
+plt.grid()
+plt.show()
+"""
 
 def Relation_Generalization_WRP(X, Y, procnum, return_dict):
     w = Relation_Generalization(X, Y)

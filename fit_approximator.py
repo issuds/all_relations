@@ -138,8 +138,8 @@ def fit_report_sklearn(params, apx):
     if not apx in accepted_sklearn_classes:
         raise BaseException("This sklearn model is not added to accepted sklearn models. Please add it. ")
 
-    for column in range(Y.shape[1]):
-        regr = accepted_sklearn_classes[apx](**specs)
+    for column, spec in zip(range(Y.shape[1]), specs):
+        regr = accepted_sklearn_classes[apx](**spec)
         regr.fit(X, Y[:, column])
 
         Yp = regr.predict(Xv)

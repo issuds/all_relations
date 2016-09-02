@@ -15,23 +15,23 @@ def file_to_columns(filename):
     with open(filename, 'rb') as csvfile:
         
         spamreader = csv.reader(csvfile, delimiter=',')
-        first = True;
+        first = True
         
         for row in spamreader:
             
             if first:
-                headers = row;
-                first = False;
+                headers = row
+                first = False
                 for header in headers:
                     columns.append([])
-                continue;
+                continue
             
             for i in range(len(row)):
                 columns[i].append(float(row[i]))
             
         # convert to numbers
         for i in range(len(columns)):
-            columns[i] = np.array(columns[i]);
+            columns[i] = np.array(columns[i])
         
         result = {}
         
