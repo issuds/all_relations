@@ -41,18 +41,17 @@ def file_to_columns(filename):
         
     return result
 
-def read_dataset(name, load_prefix = True):
+def read_dataset(dataset_csv, dataset_prefix_csv):
     """
     It is assumed that the dataset is located in the datasets folder
     """
-    
-    folder = "datasets"
-    cfile = os.path.join(folder, name + "_concepts.csv")
-    pfile = os.path.join(folder, name + "_prefix.csv")
+
+    cfile = dataset_csv
+    pfile = dataset_prefix_csv
     
     prefix = None
     
-    if os.path.exists(pfile) and load_prefix:# concatenate prefix into matrix
+    if not dataset_prefix_csv is None:# concatenate prefix into matrix
         columns = file_to_columns(pfile)
         prefix = [value for value in columns.values()]
         prefix = np.column_stack(prefix)
