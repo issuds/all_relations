@@ -1,6 +1,21 @@
-# all_relations
+# Data-Driven, Statistical Learning Method for Automatically Extracting Path Models
 
-The most certain way to install everything is to use Ubuntu virtual machine. You require virtualbox to be installed:
+This code can be used to determine weights for every pair of relations between given set of concepts which describe the strength of relation.
+
+## Data format
+
+See examples in "dataset" folder.
+Accepted data format is csv file, which has columns in the following format:
+
+conceptA1, conceptA2, ... conceptAN, conceptB1, conceptB2, ... conceptBN, 
+
+where A, B, ... are names of concepts, and by numbers 1, 2, ... are denoted features for a given concept.
+
+For further details on the data format refer to "dataset_parser.py".
+
+## Installation
+
+The most certain way to install everything is to use Ubuntu 15 virtual machine. To create one, you require virtualbox to be installed:
 
 https://www.virtualbox.org/wiki/Downloads
 
@@ -22,10 +37,13 @@ sudo apt-get update
 sudo apt-get install ubuntu-make -y
 umake ide pycharm
 
-Create bitbucket account and request rights for all_relations repository. Clone the repository in some folder. Open Pycharm IDE, and open the folder as new project.
-To run the code, right click on "main.py" in the project manager (left panel in pycharm app, double click on "all_relations" in the left upper corner if you cannot find it) and click "run main".
-wiki.py is the main script that can be used to reproduce our results. All the data we use is stored in "datasets" folder in the pycharm project.
-By default, the results of computation are cached in the file 'wiki.bin'. If you make changes to the code, rename this file so that results are recomputed.
-For details on the data format refer to "dataset_parser.py".
-
 The most straightforward way to share data with virtual machine is through cloud data storage (e.g. dropbox, google drive).
+
+## Running the code
+
+Clone this repository in some folder. 
+
+main_script.py is the main script that can be used to reproduce our results. All the data we use is stored in "datasets" folder in the pycharm project.
+By default, the results of computation are cached in the files '*.bin'. If you make changes to the code, rename this files or delete them so that results are recomputed.
+
+
