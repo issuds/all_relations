@@ -26,15 +26,21 @@ After installation of Ubuntu, run the following code in terminal (ctrl alt t):
 Install python dependencies:
 
 sudo apt-get install python-pip -y
+
 sudo pip install numpy
+
 sudo apt-get install python-scipy -y
+
 sudo apt-get install python-scipy python-dev python-pip python-nose g++ libopenblas-dev git -y
 
 Install Pycharm IDE:
 
 sudo add-apt-repository ppa:ubuntu-desktop/ubuntu-make
+
 sudo apt-get update
+
 sudo apt-get install ubuntu-make -y
+
 umake ide pycharm
 
 The most straightforward way to share data with virtual machine is through cloud data storage (e.g. dropbox, google drive).
