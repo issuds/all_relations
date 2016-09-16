@@ -3,7 +3,6 @@ parses and plots wiki dataset
 @author: iaroslav
 '''
 
-from dataset_parser import read_dataset
 import relations_backend as rbc
 import fit_approximator as fx
 import pickle

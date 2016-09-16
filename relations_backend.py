@@ -46,29 +46,29 @@ def Read_CSV_Columns(filename):
     with open(filename, 'rb') as csvfile:
         
         spamreader = csv.reader(csvfile, delimiter=',')
-        first = True;
+        first = True
         
         for row in spamreader:
             
             if first:
-                headers = row;
-                first = False;
+                headers = row
+                first = False
                 for header in headers:
                     columns.append([])
-                continue;
+                continue
             
             for i in range(len(row)):
                 columns[i].append(float(row[i]))
             
         # convert to numbers
         for i in range(len(columns)):
-            columns[i] = np.array(columns[i]);
+            columns[i] = np.array(columns[i])
         
         result = {}
         
         # create dictionary with headers
         for hdr, clm in zip(headers, columns):
-            result[hdr] = clm;
+            result[hdr] = clm
         
     return result
 
@@ -178,47 +178,21 @@ def Relation_Generalization(x,y, approximator):
 
     val, tst, spc = select_best_from(params)
     
-    return tst;
+    return tst
 
-"""
-avg = { }
-for val, tst, spcs in results:
-    key = spcs['n_neighbors']
-    if key not in avg:
-        avg[key] = []
-    if spcs['weights'] == 'uniform':
-        avg[key].append(val)
-
-x, y = [], []
-
-for key in avg:
-    x.append(key)
-    y.append(np.max(avg[key]))
-
-from matplotlib import pyplot as plt
-
-plt.figure(figsize=(4,3))
-plt.scatter(x, y)
-plt.xlabel("Number of neighbors")
-plt.ylabel("IRG")
-
-plt.axis([-10, 310, 1.1, 1.6])
-
-plt.grid()
-plt.show()
-"""
 
 def Relation_Generalization_WRP(X, Y, procnum, return_dict):
     w = Relation_Generalization(X, Y)
-    return_dict[procnum] = w;
+    return_dict[procnum] = w
 
-def Extract_1_to_1_Relations(concepts, approximator, prefix = None):
+
+def Extract_1_to_1_Relations(concepts, approximator):
     # return arrays of size 3 of the form colx, coly, relation strength
     
-    result = [];
+    result = []
     
-    idx = 0;
-    N = len(concepts) ** 2;
+    idx = 0
+    N = len(concepts) ** 2
     avg_time = None
     
     for A in concepts.keys():
@@ -226,21 +200,21 @@ def Extract_1_to_1_Relations(concepts, approximator, prefix = None):
         for B in concepts.keys():
                         
             if A == B:
-                result.append([A,B, 1000.0 ]);
+                result.append([A,B, 1000.0 ])
                 continue
             
             start_time = time.time()
             
-            X = concepts[A];
-            Y = concepts[B];
+            X = concepts[A]
+            Y = concepts[B]
             W = Relation_Generalization(X, Y, approximator)
-            result.append([A, B, W]);
+            result.append([A, B, W])
         
             est_time = (time.time() - start_time)
             avg_time = est_time if avg_time is None else avg_time*0.8 + 0.2*est_time
             N = N - 1
             
-            print "relation",A,"->",B,":",W,"; est. time:", avg_time*N
+            print "relation",A,"->",B,":",W," est. time:", avg_time*N
                     
     
     return result
