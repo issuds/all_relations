@@ -8,6 +8,10 @@ from backend import relations as rbc
 from backend import fitter as fx
 from backend import parser as drd
 
+import pickle
+import os
+import numpy as np
+
 ### SETTINGS ###
 
 dataset_csv = "datasets/wiki.csv" # see wiki.csv to understand format used

@@ -88,17 +88,6 @@ def improvement_over_guessing(Ytr, Ytst, Ypr):
     
     return rnd_obj / pr_obj
 
-def select_best_from(params):
-
-    pool = Pool(12)
-    results = pool.map(fx.train_evaluate, params)
-    pool.close()
-
-    val, tst, spc = max(results, key=lambda r: r[0])
-
-    return val, tst, spc
-
-
 def Relation_Generalization(x,y, approximator):
     # establishes how well relation between inputs and outputs can generalize
     # x : input matrix
@@ -107,6 +96,7 @@ def Relation_Generalization(x,y, approximator):
     
     # train 
     params = []
+    results = []
 
     if approximator == fx.ANN_approximator:
         for neurons in 2 ** np.arange(1,10):
@@ -119,9 +109,21 @@ def Relation_Generalization(x,y, approximator):
                         'performance measure': improvement_over_guessing,
                         'params': {'neurons': neurons, 'layers': layers}
                     })
-    else: # select parameters for every output separately, and then evalueate them all together
-
-        param = {
+    elif approximator == fx.SVR_approximator:
+        for C in 2.0 ** np.array([-10,-8,-6,-4,-2,0,2,4,6,8,10]):
+            for gamma in 2.0 ** np.array([-10,-8,-6,-4,-2,0,2,4,6,8,10]):
+                for eps in 2.0 ** np.array([-10,-8,-6,-4,-2,0]):
+                    params.append({
+                        'class':approximator,
+                        'x':x,
+                        'y':y,
+                        'performance measure': improvement_over_guessing,
+                        'params': {'C': C, 'gamma': gamma, 'epsilon': eps}
+                    })
+    elif approximator == fx.AdaBoost_approximator:
+        for pw in [2,3,4,5,6,7,8,9,10]:
+            for lr in 2.0 ** np.array([-10,-8,-6,-4,-2,0,2,4,6,8,10]):
+                params.append({
                     'class':approximator,
                     'x':x,
                     'y':y,
@@ -159,11 +161,9 @@ def Relation_Generalization(x,y, approximator):
     
     return best_tst
 
-
 def Relation_Generalization_WRP(X, Y, procnum, return_dict):
     w = Relation_Generalization(X, Y)
     return_dict[procnum] = w
-
 
 def Extract_1_to_1_Relations(concepts, approximator):
     # return arrays of size 3 of the form colx, coly, relation strength
