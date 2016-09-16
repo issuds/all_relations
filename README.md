@@ -4,46 +4,21 @@ This code can be used to determine weights for every pair of relations between g
 
 ## Data format
 
-See examples in "dataset" folder.
-Accepted data format is csv file, which has columns in the following format:
+See examples in "dataset" folder. Accepted data format is csv file, which has columns in the following format:
 
 conceptA1, conceptA2, ... conceptAN, conceptB1, conceptB2, ... conceptBN, 
 
 where A, B, ... are names of concepts, and by numbers 1, 2, ... are denoted features for a given concept.
 
-For further details on the data format refer to "dataset_parser.py".
+## Dependencies
 
-## Installation
+To run this code, numpy and sklearn python packages are necessary. The easiest way to set up all necessary dependencies is to install [Anaconda python distribution](https://www.continuum.io/downloads)
 
-The most certain way to install everything is to use Ubuntu 15 virtual machine. To create one, you require virtualbox to be installed:
-
-https://www.virtualbox.org/wiki/Downloads
-
-Install Ubuntu 15 using VirtualBox.
-
-After installation of Ubuntu, run the following code in terminal (ctrl alt t):
-
-Install python dependencies:
-
-sudo apt-get install python-pip -y
-sudo pip install numpy
-sudo apt-get install python-scipy -y
-sudo apt-get install python-scipy python-dev python-pip python-nose g++ libopenblas-dev git -y
-
-Install Pycharm IDE:
-
-sudo add-apt-repository ppa:ubuntu-desktop/ubuntu-make
-sudo apt-get update
-sudo apt-get install ubuntu-make -y
-umake ide pycharm
-
-The most straightforward way to share data with virtual machine is through cloud data storage (e.g. dropbox, google drive).
+Additionally, [tensorflow](https://www.tensorflow.org/) is necessary if you wish to use artificial neural networks. Currently (September 2016) installation of tensorflow is only supported on Linux based OS (e.g. Ubuntu). 
 
 ## Running the code
 
-Clone this repository in some folder. 
+Python script "main.py" can be used to run the code with your own data, provided that the data is in the compatible format. See "main.py" for further details. Simply run the script after you checked out the repository to run the code on the data used in our paper.
 
-main_script.py is the main script that can be used to reproduce our results. All the data we use is stored in "datasets" folder in the pycharm project.
-By default, the results of computation are cached in the files '*.bin'. If you make changes to the code, rename this files or delete them so that results are recomputed.
 
 
