@@ -126,7 +126,6 @@ def Relation_Generalization(x,y, approximator):
                     'x':x,
                     'y':y,
                     'performance measure': improvement_over_guessing,
-<<<<<<< HEAD:backend/relations.py
                     'params': {'n_estimators': 2 ** pw, 'learning_rate': lr}
                 })
 
@@ -159,81 +158,18 @@ def Relation_Generalization(x,y, approximator):
     
     
     return best_tst
-=======
-                    'params': []
-                }
 
-        for i in range(y.shape[1]):
-
-            otp = y[:, [i]] # select output column
-
-            # select here parameters for every entry in output vector
-            if approximator == fx.SVR_approximator:
-                for C in 2.0 ** np.array([-10,-8,-6,-4,-2,0,2,4,6,8,10]):
-                    for gamma in 2.0 ** np.array([-10,-8,-6,-4,-2,0,2,4,6,8,10]):
-                        for eps in 2.0 ** np.array([-10,-8,-6,-4,-2,0]):
-                            params.append({
-                                'class':approximator,
-                                'x':x,
-                                'y':otp,
-                                'performance measure': improvement_over_guessing,
-                                'params': [{'C': C, 'gamma': gamma, 'epsilon': eps}]
-                            })
-            elif approximator == fx.AdaBoost_approximator:
-                for pw in [2,3,4,5,6,7,8,9,10]:
-                    for lr in 2.0 ** np.array([-10,-8,-6,-4,-2,0,2,4,6,8,10]):
-                        params.append({
-                            'class':approximator,
-                            'x':x,
-                            'y':otp,
-                            'performance measure': improvement_over_guessing,
-                            'params': [{'n_estimators': 2 ** pw, 'learning_rate': lr}]
-                        })
-
-            elif approximator == fx.KNN_approximator:
-                for k in range(1, len(x) // 2, 5):
-                    for msr in ['minkowski']:
-                        for weights in ['uniform', 'distance']:
-                            params.append({
-                                'class':approximator,
-                                'x':x,
-                                'y':otp,
-                                'performance measure': improvement_over_guessing,
-                                'params': [{'n_neighbors': k, 'metric': msr, 'weights': weights}]
-                            })
-            else:
-                raise BaseException('approximator type not understood')
-
-            val, tst, spc = select_best_from(params)
-            param['params'].extend(spc)
-
-        params = [param]
-
-    val, tst, spc = select_best_from(params)
-    
-    return tst
-
->>>>>>> b745984d4bfb08f1ad4f41348a02ca9400d94a36:relations_backend.py
 
 def Relation_Generalization_WRP(X, Y, procnum, return_dict):
     w = Relation_Generalization(X, Y)
     return_dict[procnum] = w
-<<<<<<< HEAD:backend/relations.py
-=======
 
->>>>>>> b745984d4bfb08f1ad4f41348a02ca9400d94a36:relations_backend.py
 
 def Extract_1_to_1_Relations(concepts, approximator):
     # return arrays of size 3 of the form colx, coly, relation strength
     
-<<<<<<< HEAD:backend/relations.py
     result = {}
 
-=======
-    result = []
-    
-    idx = 0
->>>>>>> b745984d4bfb08f1ad4f41348a02ca9400d94a36:relations_backend.py
     N = len(concepts) ** 2
     avg_time = None
 
@@ -245,11 +181,7 @@ def Extract_1_to_1_Relations(concepts, approximator):
         for B in concepts.keys(): # to B
                         
             if A == B:
-<<<<<<< HEAD:backend/relations.py
                 result[A][B] = None
-=======
-                result.append([A,B, 1000.0 ])
->>>>>>> b745984d4bfb08f1ad4f41348a02ca9400d94a36:relations_backend.py
                 continue
             
             start_time = time.time()
@@ -257,21 +189,12 @@ def Extract_1_to_1_Relations(concepts, approximator):
             X = concepts[A]
             Y = concepts[B]
             W = Relation_Generalization(X, Y, approximator)
-<<<<<<< HEAD:backend/relations.py
             result[A][B] = W
-=======
-            result.append([A, B, W])
->>>>>>> b745984d4bfb08f1ad4f41348a02ca9400d94a36:relations_backend.py
         
             est_time = (time.time() - start_time)
             avg_time = est_time if avg_time is None else avg_time*0.8 + 0.2*est_time
             N = N - 1
             
             print "relation",A,"->",B,":",W," est. time:", avg_time*N
-<<<<<<< HEAD:backend/relations.py
 
-=======
-                    
-    
->>>>>>> b745984d4bfb08f1ad4f41348a02ca9400d94a36:relations_backend.py
     return result
