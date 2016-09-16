@@ -1,16 +1,10 @@
 '''
-Created on Mar 11, 2016
-
-@author: iaroslav
-
-methods to train ffnn 
+This does fittingo of the
 '''
 
-from feedforward import ffnn
 import numpy as np
-import tensorflow as tf
 
-# some names
+# names
 ANN_approximator = "ANN"
 SVR_approximator = "SVR"
 AdaBoost_approximator = "AdaBoost"
@@ -30,30 +24,33 @@ def prepare_data(x, y):
     xm = np.mean(X, axis=0)
     ym = np.mean(Y, axis=0)
 
-    X = X - xm;
-    Y = Y - ym;
+    X = X - xm
+    Y = Y - ym
 
-    Xv = Xv - xm;
-    Yv = Yv - ym;
+    Xv = Xv - xm
+    Yv = Yv - ym
 
-    Xt = Xt - xm;
-    Yt = Yt - ym;
+    Xt = Xt - xm
+    Yt = Yt - ym
 
     xd = np.std(X, axis=0)
     yd = np.std(Y, axis=0)
 
-    X = X / xd;
-    Y = Y / yd;
+    X = X / xd
+    Y = Y / yd
 
-    Xv = Xv / xd;
-    Yv = Yv / yd;
+    Xv = Xv / xd
+    Yv = Yv / yd
 
-    Xt = Xt / xd;
-    Yt = Yt / yd;
+    Xt = Xt / xd
+    Yt = Yt / yd
 
     return X, Y, Xv, Yv, Xt, Yt
 
 def fit_report_ANN(params):
+
+    from feedforward import ffnn
+    import tensorflow as tf
 
     X, Y, Xv, Yv, Xt, Yt = prepare_data(params['x'], params['y'])
     measure = params['performance measure']
@@ -93,7 +90,7 @@ def fit_report_ANN(params):
         train_step.run(feed_dict=inputs)
 
         inputs_val = {ipt: Xv, gtr: Yv}
-        Ypr = otp.eval(feed_dict=inputs_val);
+        Ypr = otp.eval(feed_dict=inputs_val)
         local_acc = measure(Y, Yv, Ypr)
 
         if local_acc > best_acc:
@@ -101,7 +98,7 @@ def fit_report_ANN(params):
             best_acc = local_acc
 
             inputs_tst = {ipt: Xt, gtr: Yt}
-            Ypr = otp.eval(feed_dict=inputs_tst);
+            Ypr = otp.eval(feed_dict=inputs_tst)
             test_acc = measure(Y, Yt, Ypr)
 
             # saver.save(sess, best_model_name)
@@ -114,16 +111,20 @@ def fit_report_ANN(params):
 
     return best_acc, test_acc, specs
 
-from sklearn.svm import SVR
-from sklearn.ensemble import AdaBoostRegressor
-from sklearn.neighbors import KNeighborsRegressor
 
-accepted_sklearn_classes = {}
-accepted_sklearn_classes[SVR_approximator] = SVR
-accepted_sklearn_classes[AdaBoost_approximator] = AdaBoostRegressor
-accepted_sklearn_classes[KNN_approximator] = KNeighborsRegressor
 
 def fit_report_sklearn(params, apx):
+
+
+    from sklearn.svm import SVR
+    from sklearn.ensemble import AdaBoostRegressor
+    from sklearn.neighbors import KNeighborsRegressor
+
+    accepted_sklearn_classes = {}
+    accepted_sklearn_classes[SVR_approximator] = SVR
+    accepted_sklearn_classes[AdaBoost_approximator] = AdaBoostRegressor
+    accepted_sklearn_classes[KNN_approximator] = KNeighborsRegressor
+
 
     X, Y, Xv, Yv, Xt, Yt = prepare_data(params['x'], params['y'])
     measure = params['performance measure']

@@ -4,18 +4,17 @@ Contains functions for processing of all relations
 '''
 import csv
 import numpy as np
-from sklearn.svm import SVR
-import fit_approximator as fx
+import fitter as fx
 
-import networkx as nx
-import matplotlib.pyplot as plt
 import time
 from multiprocessing import Pool
 
 
 
 def plot_relations(relations, thr):
-    
+
+    import networkx as nx
+    import matplotlib.pyplot as plt
     
     G=nx.DiGraph()
 
@@ -46,29 +45,29 @@ def Read_CSV_Columns(filename):
     with open(filename, 'rb') as csvfile:
         
         spamreader = csv.reader(csvfile, delimiter=',')
-        first = True;
+        first = True
         
         for row in spamreader:
             
             if first:
-                headers = row;
-                first = False;
+                headers = row
+                first = False
                 for header in headers:
                     columns.append([])
-                continue;
+                continue
             
             for i in range(len(row)):
                 columns[i].append(float(row[i]))
             
         # convert to numbers
         for i in range(len(columns)):
-            columns[i] = np.array(columns[i]);
+            columns[i] = np.array(columns[i])
         
         result = {}
         
         # create dictionary with headers
         for hdr, clm in zip(headers, columns):
-            result[hdr] = clm;
+            result[hdr] = clm
         
     return result
 
@@ -146,83 +145,56 @@ def Relation_Generalization(x,y, approximator):
     else:
         raise BaseException('approximator type not understood')
     
-    pool = Pool(12)
+    pool = Pool()
     results = pool.map(fx.train_evaluate, params)
     pool.close()
     
-    best_val = 0.0;
-    best_tst = 0;
-
-    """
-    avg = { }
-    for val, tst, spcs in results:
-        key = spcs['n_neighbors']
-        if key not in avg:
-            avg[key] = []
-        if spcs['weights'] == 'uniform':
-            avg[key].append(val)
-
-    x, y = [], []
-
-    for key in avg:
-        x.append(key)
-        y.append(np.max(avg[key]))
-
-    from matplotlib import pyplot as plt
-
-    plt.figure(figsize=(4,3))
-    plt.scatter(x, y)
-    plt.xlabel("Number of neighbors")
-    plt.ylabel("IRG")
-
-    plt.axis([-10, 310, 1.1, 1.6])
-
-    plt.grid()
-    plt.show()
-    """
+    best_val = 0.0
+    best_tst = 0
 
     for val, tst, spcs in results:
         # spcs is necessary for plots if any
         if val > best_val:
-            best_val = val;
-            best_tst = tst;
+            best_val = val
+            best_tst = tst
     
     
-    return best_tst;
+    return best_tst
 
 def Relation_Generalization_WRP(X, Y, procnum, return_dict):
     w = Relation_Generalization(X, Y)
-    return_dict[procnum] = w;
+    return_dict[procnum] = w
 
-def Extract_1_to_1_Relations(concepts, approximator, prefix = None):
+def Extract_1_to_1_Relations(concepts, approximator):
     # return arrays of size 3 of the form colx, coly, relation strength
     
-    result = [];
-    
-    idx = 0;
-    N = len(concepts) ** 2;
+    result = {}
+
+    N = len(concepts) ** 2
     avg_time = None
-    
-    for A in concepts.keys():
-        
-        for B in concepts.keys():
+
+    # given A, predict B
+    for A in concepts.keys(): # relation from A ...
+
+        result[A] = {}
+
+        for B in concepts.keys(): # to B
                         
             if A == B:
-                result.append([A,B, 1000.0 ]);
+                result[A][B] = None
                 continue
             
             start_time = time.time()
             
-            X = concepts[A];
-            Y = concepts[B];
+            X = concepts[A]
+            Y = concepts[B]
             W = Relation_Generalization(X, Y, approximator)
-            result.append([A, B, W]);
+            result[A][B] = W
         
             est_time = (time.time() - start_time)
             avg_time = est_time if avg_time is None else avg_time*0.8 + 0.2*est_time
             N = N - 1
             
-            print "relation",A,"->",B,":",W,"; est. time:", avg_time*N
-                    
-    
+            print "relation",A,"->",B,":",W," est. time:", avg_time*N
+
     return result

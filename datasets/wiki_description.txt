@@ -8,3 +8,5 @@ PU: Perceived usefulness
 PEU: Perceived ease of use
 QU: Quality
 USE: Use behavior
+
+wiki.csv: preprocessed dataset, used in our experiments.
