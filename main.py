@@ -1,6 +1,9 @@
 '''
 parses and plots wiki dataset 
 @author: iaroslav
+
+Important: this is a version of the code where for every value of the concept being predicted a grid search is done separately. We found that data of size ~300 instances this leads to overfitting.
+
 '''
 
 import relations_backend as rbc
