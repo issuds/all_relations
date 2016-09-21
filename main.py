@@ -8,22 +8,63 @@ from backend import relations as rbc
 from backend import fitter as fx
 from backend import parser as drd
 
+import pandas as ps
 import pickle
 import os
 import numpy as np
 
-if __name__ == "__main__":
-    ### SETTINGS ###
+if __name__ == "__main__": # all the code is in main so that it works properly on windows in shell
+    """
+    Settings:
+    """
 
-    dataset_csv = "datasets/wiki.csv" # see wiki.csv to understand format used
+    dataset_csv = "datasets/utaut.csv" # see wiki.csv to understand format used
     results_folder = "results" # this folder should exist
     model_classes = [fx.KNN_approximator, fx.SVR_approximator, fx.AdaBoost_approximator] # fx.ANN_approximator - use if TensorFlow is installed
 
-    ### CODE STARTS HERE ###
+    """
+    What happens below is as follows:
+    1. The dataset is split into statistical learning and evaluation parts. Statistical learning
+        part is used to establish weights for all pairs of concepts, and evaluation part can be
+        used to evaluate the model extracted from the weights for all pairs of conecpts.
+        The split of the dataset is stored in the results_folder.
+
+    2. The statistical learning part is used to come up with weights for every pair of concepts.
+
+    3. For the computed relation weights for every selected class, the average is computed, which
+        is used to come up with an order of relations from the strongest ones to weakest ones.
+
+    """
+
+    """ 1. Split the data"""
 
     dataset_name = os.path.basename(dataset_csv)[:-4] # remove the .csv at the end of dataset name
 
-    # compute the IRGs
+    # create folder with dataset name
+    results_folder = os.path.join(results_folder, dataset_name)
+
+    if not os.path.exists(results_folder):
+        os.mkdir(results_folder)
+
+    # load and split the dataset: stat. training part 2/3, rest eval part
+    dataset = ps.read_csv(dataset_csv, skip_blank_lines = True)
+
+    # replace missing values with -1
+    dataset = dataset.replace("?", "-1")
+    dataset = dataset.replace("null", "-1")
+    dataset = dataset.replace("Null", "-1")
+    dataset = dataset.fillna(-1)
+
+    stat_train_part = dataset[:-int(len(dataset) / 3)]
+    eval_part = dataset[-int(len(dataset) / 3):]
+
+    # save dataset parts
+    eval_part.to_csv(os.path.join(results_folder, "for_evaluation.csv"), index = False)
+
+    dataset_csv = os.path.join(results_folder, "dataset.csv")
+    stat_train_part.to_csv(dataset_csv, index = False)
+
+    """ 2. Compute the IRGs"""
     for model_class in model_classes:
 
         fname = dataset_name + "_" + model_class
@@ -57,7 +98,7 @@ if __name__ == "__main__":
 
         print csv_result
 
-    # compute the average over IRGs for different classes for all relations
+    """ 3. compute the average over IRGs for different classes for all relations """
     all_relations = {}
 
     for model_class in model_classes:
