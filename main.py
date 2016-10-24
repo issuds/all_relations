@@ -20,7 +20,7 @@ if __name__ == "__main__": # all the code is in main so that it works properly o
 
     dataset_csv = "datasets/utaut.csv" # see wiki.csv to understand format used
     results_folder = "results" # this folder should exist
-    model_classes = [fx.KNN_approximator, fx.SVR_approximator, fx.AdaBoost_approximator] # fx.ANN_approximator - use if TensorFlow is installed
+    model_classes = [fx.KNN_approximator, fx.SVR_approximator, fx.AdaBoost_approximator, fx.ANN_approximator] # - use if TensorFlow is installed
 
     """
     What happens below is as follows:
