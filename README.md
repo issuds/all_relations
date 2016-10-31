@@ -16,7 +16,14 @@ https://hub.docker.com/r/ed3s/all-relations/
 
 Please note: installation that can use artificial neural networks is not possible on Windows, as currently [tensorflow](https://www.tensorflow.org/) necessary to run such ann as of now (September 2016) does not support Windows. 
 
-To run this code, numpy and sklearn python packages are necessary. The easiest way to set up all necessary dependencies is to install [Anaconda python distribution](https://www.continuum.io/downloads)
+1. Install [Anaconda python distribution](https://www.continuum.io/downloads)
+2. Install [Tensorflow](https://www.tensorflow.org/): Open terminal, and type 
+`conda install -c jjhelmus tensorflow=0.10.0rc0`
+If you are on Windows, you can skip this step, however ANN option will not work.
+3. Clone or download this repository in some folder. 
+4. Install [PyCharm IDE](https://www.jetbrains.com/pycharm/download/downloads)
+5. Open PyCharm IDE. Go to "File > Open" and choose to open the folder with unpacked source code from repository. 
+6. You might need to configure the interpreter for PyCharm. Select anacoda python 2.7 interpreter by going to file > settings > project > interpreter.
 
 ## Running the code
 
