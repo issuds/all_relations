@@ -16,13 +16,13 @@ https://hub.docker.com/r/ed3s/all-relations/
 
 Please note: installation that can use artificial neural networks is not possible on Windows, as currently [tensorflow](https://www.tensorflow.org/) necessary to run such ann as of now (September 2016) does not support Windows. 
 
-1. Install [Anaconda python distribution](https://www.continuum.io/downloads)
+1. Install [Anaconda python distribution](https://www.continuum.io/downloads).
 2. Install [Tensorflow](https://www.tensorflow.org/): Open terminal, and type 
-`conda install -c jjhelmus tensorflow=0.10.0rc0`
-If you are on Windows, you can skip this step, however ANN option will not work.
+`conda install -c jjhelmus tensorflow=0.10.0rc0`.
+If you are on Windows, you can skip this step, however ANNs  will not work.
 3. Clone or download this repository in some folder. 
 4. Install [PyCharm IDE](https://www.jetbrains.com/pycharm/download/downloads)
-5. Open PyCharm IDE. Go to "File > Open" and choose to open the folder with unpacked source code from repository. 
+5. Open PyCharm IDE. Go to "File > Open" and choose to open the folder with source code from repository. 
 6. You might need to configure the interpreter for PyCharm. Select anacoda python 2.7 interpreter by going to file > settings > project > interpreter.
 
 ## Running the code
@@ -33,7 +33,7 @@ Python script "main.py" can be used to run the code with your own data, provided
 
 See examples in "dataset" folder. Accepted data format is csv file, which has columns in the following format:
 
-conceptA1, conceptA2, ... conceptAN, conceptB1, conceptB2, ... conceptBN, 
+A1, A2, ... AN, B1, B2, ... BN, 
 
 where A, B, ... are names of concepts, and by numbers 1, 2, ... are denoted features for a given concept.
 
