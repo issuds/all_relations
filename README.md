@@ -14,7 +14,7 @@ https://hub.docker.com/r/ed3s/all-relations/
 
 ### Installation on your system
 
-Please note: installation that can use artificial neural networks is not possible on Windows, as currently [tensorflow](https://www.tensorflow.org/) necessary to run such ann as of now (September 2016) does not support Windows. 
+Please note: installation that can use artificial neural networks is not possible on Windows, as currently [tensorflow](https://www.tensorflow.org/) necessary to run such ann currently (September 2016) does not support Windows. 
 
 1. Install [Anaconda python distribution](https://www.continuum.io/downloads).
 2. Install [Tensorflow](https://www.tensorflow.org/): Open terminal, and type 
