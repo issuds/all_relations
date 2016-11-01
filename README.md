@@ -17,13 +17,16 @@ https://hub.docker.com/r/ed3s/all-relations/
 Please note: installation that can use artificial neural networks is not possible on Windows, as currently [tensorflow](https://www.tensorflow.org/) necessary to run such ann currently (September 2016) does not support Windows. 
 
 1. Install [Anaconda python distribution](https://www.continuum.io/downloads).
-2. Install [Tensorflow](https://www.tensorflow.org/): Open terminal, and type 
+2. Open terminal in Anaconda Navigator and update conda: condo update conda
+3. Create New Environment with a name "condaenv" (choose your name), Python option and version 2.7; import package pandas 
+4. Install [Tensorflow](https://www.tensorflow.org/): Open terminal in Anaconda Navigator, and type 
 `conda install -c jjhelmus tensorflow=0.10.0rc0`.
 If you are on Windows, you can skip this step, however ANNs  will not work.
-3. Clone or download this repository in some folder. 
-4. Install [PyCharm IDE](https://www.jetbrains.com/pycharm/download/downloads)
-5. Open PyCharm IDE. Go to "File > Open" and choose to open the folder with source code from repository. 
-6. You might need to configure the interpreter for PyCharm. Select anacoda python 2.7 interpreter by going to file > settings > project > interpreter.
+5. Clone or download this repository in some folder. 
+6. Install [PyCharm IDE](https://www.jetbrains.com/pycharm/)
+7. Open PyCharm IDE. Go to "File > Open" and choose to open the folder with source code from repository. 
+Open File>Default Settings>Project Interpreter ; select project interpreter by the environment name "condaenv"
+8. You might need to configure the interpreter for PyCharm. Select anacoda python 2.7 interpreter by going to file > settings > project > interpreter.
 
 ## Running the code
 
@@ -36,5 +39,6 @@ See examples in "dataset" folder. Accepted data format is csv file, which has co
 A1, A2, ... AN, B1, B2, ... BN, 
 
 where A, B, ... are names of concepts, and by numbers 1, 2, ... are denoted features for a given concept.
+
 
 
