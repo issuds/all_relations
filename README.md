@@ -26,7 +26,6 @@ If you are on Windows, you can skip this step, however ANNs  will not work.
 6. Install [PyCharm IDE](https://www.jetbrains.com/pycharm/)
 7. Open PyCharm IDE. Go to "File > Open" and choose to open the folder with source code from repository. 
 Open File>Default Settings>Project Interpreter ; select project interpreter by the environment name "condaenv"
-8. You might need to configure the interpreter for PyCharm. Select anacoda python 2.7 interpreter by going to file > settings > project > interpreter.
 
 ## Running the code
 
