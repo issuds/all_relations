@@ -20,7 +20,7 @@ Please note: installation that can use artificial neural networks is not possibl
 2. Open terminal in Anaconda Navigator and update conda: condo update conda
 3. Create New Environment with a name "condaenv" (choose your name), Python option and version 2.7; import package pandas 
 4. Install [Tensorflow](https://www.tensorflow.org/): Open terminal in Anaconda Navigator, and type 
-`conda install -c jjhelmus tensorflow=0.10.0rc0`.
+`conda install -c jjhelmus tensorflow=0.10.0rc0` ('--name condaenv' if you install in a specific environment)
 If you are on Windows, you can skip this step, however ANNs  will not work.
 5. Clone or download this repository in some folder. 
 6. Install [PyCharm IDE](https://www.jetbrains.com/pycharm/)
