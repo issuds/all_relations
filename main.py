@@ -4,8 +4,7 @@ parses and plots wiki dataset
 '''
 
 import pandas as ps
-from backend import relations as rbc
-from backend import fitter as fx
+from backend import relations as fx
 from backend import parser as drd
 
 import pandas as ps
@@ -18,15 +17,16 @@ if __name__ == "__main__": # all the code is in main so that it works properly o
     Settings:
     """
 
-    dataset_csv = "datasets/utaut.csv" # see wiki.csv to understand format used
+    dataset_csv = "datasets/wiki.csv" # see wiki.csv to understand format used
     results_folder = "results" # this folder should exist
-    model_classes = [fx.KNN_approximator, fx.SVR_approximator, fx.AdaBoost_approximator, fx.ANN_approximator] # - use if TensorFlow is installed
+    model_classes = [ fx.Linear_approximator, fx.Tree_approximator, fx.KNN_approximator, fx.SVR_approximator, fx.AdaBoost_approximator, fx.ANN_approximator] # - use if TensorFlow is installed
+    evaluation_metric = fx.Rsq # Rsq - R^2, IRG - improvement over random performance measure. For both more is better
 
     """
     What happens below is as follows:
     1. The dataset is split into statistical learning and evaluation parts. Statistical learning
         part is used to establish weights for all pairs of concepts, and evaluation part can be
-        used to evaluate the model extracted from the weights for all pairs of conecpts.
+        used to evaluate the model extracted from the weights for all pairs of concepts.
         The split of the dataset is stored in the results_folder.
 
     2. The statistical learning part is used to come up with weights for every pair of concepts.
@@ -74,7 +74,7 @@ if __name__ == "__main__": # all the code is in main so that it works properly o
 
         # establish relationships if not given
         if not os.path.exists(results_bin):
-            rlt = rbc.Extract_1_to_1_Relations(drd.read_dataset(dataset_csv), model_class)
+            rlt = fx.Extract_1_to_1_Relations(drd.read_dataset(dataset_csv), evaluation_metric, model_class, results_folder)
 
             # store results_paper in a .bin file
             with open(results_bin, 'wb') as handle:
