@@ -417,14 +417,18 @@ def Relation_Generalization(x,y, measure, approximator, A=None, B=None, results_
                 'params': {'alpha': alpha}
             })
     elif approximator == Tree_approximator:
-        for depth in range(1,8):
-            params.append({
-                'class':approximator,
-                'x':x,
-                'y':y,
-                'performance measure': measure,
-                'params': {'max_depth': depth}
-            })
+        for depth in range(1,16):
+            min_samples_split = 1.0
+            while min_samples_split < len(x):
+                min_samples_split *= 2.0
+
+                params.append({
+                    'class':approximator,
+                    'x':x,
+                    'y':y,
+                    'performance measure': measure,
+                    'params': {'max_depth': depth, 'min_samples_split':max(1, int(len(x) / min_samples_split))}
+                })
     else:
         raise BaseException('approximator type not understood')
     
