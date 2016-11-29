@@ -150,7 +150,7 @@ if __name__ == "__main__": # all the code is in main so that it works properly o
         if not A in result:
             result[A] = {A:""}
         if not B in result[A]:
-            result[A][B] = str(np.round(value['Mean'],4))+"+-"+str(np.round(value['Std'],4))
+            result[A][B] = str(np.round(value['Mean'],4)) #+' -/+ '+str(np.round(value['Std'],4))
 
     # convert to csv
     matrix_csv = ','.join([""] + result.keys()) # header row
