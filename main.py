@@ -76,11 +76,11 @@ if __name__ == "__main__": # all the code is in main so that it works properly o
         if not os.path.exists(results_bin):
             rlt = fx.Extract_1_to_1_Relations(drd.read_dataset(dataset_csv), evaluation_metric, model_class, results_folder)
 
-            # store results_paper in a .bin file
+            # store results in a .bin file
             with open(results_bin, 'wb') as handle:
                 pickle.dump(rlt, handle)
 
-        # load computed results_paper
+        # load computed results
         with open(results_bin, 'rb') as handle:
             rlt = pickle.load(handle)
 
@@ -98,8 +98,14 @@ if __name__ == "__main__": # all the code is in main so that it works properly o
 
         print csv_result
 
+
+
     """ 3. compute the average over IRGs for different classes for all relations """
+    # this is used to come up with ranking
     all_relations = {}
+
+    # the arrow symbol
+    arrow = "->"
 
     for model_class in model_classes:
 
@@ -117,20 +123,40 @@ if __name__ == "__main__": # all the code is in main so that it works properly o
 
                 W = rlt[A][B]
 
-                key = A + "->" + B
-                if not key in all_relations:
-                    all_relations[key] = []
+                element = A + arrow + B
+                if not element in all_relations:
+                    all_relations[element] = []
 
-                all_relations[key].append(W)
+                all_relations[element].append(W)
 
     # compute average IRG over different predictive classes for relations
-    all_relations = [{'relation': key, 'IRG': np.mean(all_relations[key])} for key in all_relations]
-    all_relations.sort(key= lambda value: value['IRG'], reverse=True)
+    all_relations = [{'relation': element, 'Mean': np.mean(all_relations[element]), 'Std': np.std(all_relations[element])} for element in all_relations]
+    all_relations.sort(key= lambda value: value['Mean'], reverse=True)
 
-    ranking = "\n".join([value['relation'] + "," + str(value['IRG']) for value in all_relations])
+    ranking = "\n".join([value['relation'] + "," + str(value['Mean']) + "," + str(value['Std']) for value in all_relations])
+    ranking = "Relation,Strength mean,Strength deviation\n" + ranking
 
     # save the csv
-    ranking_csv = os.path.join(results_folder, dataset_name + "_ranking.csv")
+    ranking_csv = os.path.join(results_folder, "ranking.csv")
 
     with open(ranking_csv, "w") as f:
         f.write(ranking)
+
+    result = {}
+
+    # convert to matrix format
+    for value in all_relations:
+        A, B = value['relation'].split(arrow)
+        if not A in result:
+            result[A] = {A:""}
+        if not B in result[A]:
+            result[A][B] = str(np.round(value['Mean'],4))+"+-"+str(np.round(value['Std'],4))
+
+    # convert to csv
+    matrix_csv = ','.join([""] + result.keys()) # header row
+    for A in result.keys():
+        matrix_csv += '\n' + ','.join([A] + [result[A][B] for B in result.keys()])
+
+    # save as csv file
+    matrix_csv_file = os.path.join(results_folder, "matrix.csv")
+    open(matrix_csv_file, 'w').write(matrix_csv)
