@@ -35,9 +35,22 @@ Python script "main.py" can be used to run the code with your own data, provided
 
 See examples in "dataset" folder. Accepted data format is csv file, which has columns in the following format:
 
-A1, A2, ... AN, B1, B2, ... BN, 
+A1, A2, ... AN, B1, B2, ... BN, C1 ...
 
-where A, B, ... are names of concepts, and by numbers 1, 2, ... are denoted features for a given concept.
+where A, B, C ... are names of concepts, and by numbers 1, 2, ... are denoted features for a given concept.
 
+For example, for two concepts A and B, where A has 2 features, and B has 3 features, the dataset csv would look as follows:
 
+| A1 | A2 | B1 | B2 | B3 |
+|----|----|----|----|----|
+| 0  | 1  | 0  | 1  | 2  |
+| 3  | 0  | 2  | 3  | 0  |
+| 2  | 0  | 2  | 1  | 2  |
+| 1  | 3  | 2  | 0  | 1  |
+| 2  | 3  | 0  | 1  | 2  |
 
+## Structure of results
+
+Results are stored in the `results_folder` specified in the main.py. The structure of results is as follows: for every class of predictive models considered, the file "\[datasetname\]\_\[model\_class\].csv" is created, where the contents of csv file contain matrix with weights of strength relation between every pair of relations. 
+
+In addition, `matrix.csv` contains average values of strength in matrix format, and ranking.csv contains list of one to one relations sorted by average relation strength. The file `for_evaluation.csv` contains data that was not used for the relation strength extraction and can be used for further verification of extracted model. The file `dataset.csv` contains original dataset. 
