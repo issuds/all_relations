@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="37df758d-3f2e-4ffa-80e3-6b6924d1c237" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/results/nto1.b" afterPath="$PROJECT_DIR$/results/nto1.b" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/results/nto1.b" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main.py" afterPath="$PROJECT_DIR$/main.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/visualize.py" afterPath="$PROJECT_DIR$/visualize.py" />
     </list>
     <ignored path="all_relations.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -138,10 +138,10 @@
         <option value="$PROJECT_DIR$/datasets/utaut.csv" />
         <option value="$PROJECT_DIR$/datasets/wiki.csv" />
         <option value="$PROJECT_DIR$/main_sklearn.py" />
-        <option value="$PROJECT_DIR$/visualize.py" />
         <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/backend/skapi.py" />
         <option value="$PROJECT_DIR$/main.py" />
+        <option value="$PROJECT_DIR$/visualize.py" />
       </list>
     </option>
   </component>
