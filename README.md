@@ -7,7 +7,22 @@ If something does not work on python 2 leat us know.
 You require the following packages to be installed on your system: 
 `numpy`, `scipy`, `pandas` `scikit-learn`, `scikit-optimize`, `tqdm`. 
 
-### Installation on your system
+### Installation on Ubuntu
+
+Open a terminal. In the terminal, navigate to the folder of the repository.
+When in the folder, run following commands:
+
+```bash
+bash install.sh
+```
+
+If you also wish to install Pycharm IDE to use as GUI python editor, run the 
+following command in the folder of the repository:
+```bash
+bash pycharm.sh
+```
+
+### Installation on MacOS
 
 1. Install [Anaconda python distribution](https://www.continuum.io/downloads).
 2. Open terminal in Anaconda Navigator and update conda: condo update conda
