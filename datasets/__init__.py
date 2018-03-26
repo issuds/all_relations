@@ -12,8 +12,8 @@ def read_gender_discrimination_dataset():
     data = data.replace(8, np.nan)
     data = data.replace(9, np.nan)
     data = pd.DataFrame(data, dtype='float')
-    I = np.random.rand(len(data)) < 0.1
-    data = data[I]
+    #I = np.random.rand(len(data)) < 0.1
+    #data = data[I]
     return data
 
 

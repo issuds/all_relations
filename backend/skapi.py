@@ -97,7 +97,7 @@ def make_regressor():
     # combination which yields the best validation loss
     model = GridSearchCV(
         estimator=estimator,
-        param_grid=[lasso], #knn, lasso, gbrt, dectree
+        param_grid=[knn, lasso, gbrt, dectree], #
         n_jobs=-1,
         verbose=0,
     )
