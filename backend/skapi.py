@@ -14,14 +14,15 @@ from sklearn.linear_model import Lasso
 from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
 from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
 from sklearn.dummy import DummyClassifier, DummyRegressor
-from sklearn.multioutput import MultiOutputRegressor
+from sklearn.metrics import r2_score
 
-from sklearn.preprocessing import RobustScaler, StandardScaler
+from sklearn.preprocessing import RobustScaler, StandardScaler, Imputer
 from sklearn.pipeline import Pipeline, make_pipeline, make_union
-from sklearn.model_selection import GridSearchCV, cross_val_score
+from sklearn.model_selection import GridSearchCV, cross_val_score, cross_val_predict
 
 from skopt import gp_minimize
 
+from string import digits
 
 def pandas_to_concepts(data):
     """
@@ -46,7 +47,7 @@ def pandas_to_concepts(data):
 
         # select only the name of concept here
         concept = c
-        while concept[-1] in "123456890":
+        while concept[-1] in digits:
             concept = concept[:-1]
 
         if not concept in result:
@@ -67,6 +68,7 @@ def make_regressor():
         to features to learn the relationship.
     """
     estimator = Pipeline([
+        ('imputer', Imputer()),
         ('scale', StandardScaler()),
         ('model', GradientBoostingRegressor()),
     ])
@@ -74,16 +76,16 @@ def make_regressor():
     # search spaces for different model classes
     gbrt = {
         'model': [GradientBoostingRegressor()],
-        'model__n_estimators': [2 ** i for i in range(1, 11)],
-        'model__learning_rate': [2 ** i for i in range(-10, 0)],
+        'model__n_estimators': [2 ** i for i in range(1, 9)],
+        #'model__learning_rate': [2 ** i for i in range(-10, 0)],
     }
     lasso = {
         'model': [Lasso()],
-        'model__alpha': [10 ** i for i in np.linspace(-6, 6, 20)],
+        'model__alpha': [10 ** i for i in np.linspace(-6, 6, 11)],
     }
     knn = {
         'model': [KNeighborsRegressor()],
-        'model__n_neighbors': range(1, 10),
+        'model__n_neighbors': range(1, 100, 5),
     }
     dectree = {
         'model': [DecisionTreeRegressor()],
@@ -95,7 +97,7 @@ def make_regressor():
     # combination which yields the best validation loss
     model = GridSearchCV(
         estimator=estimator,
-        param_grid=[gbrt, lasso, knn, dectree], #
+        param_grid=[lasso], #knn, lasso, gbrt, dectree
         n_jobs=-1,
         verbose=0,
     )
@@ -104,15 +106,23 @@ def make_regressor():
 
 
 def mapping_power(X, Y):
-    model = MultiOutputRegressor(
-        estimator=make_regressor()
-    )
-
     # evaluate all the models in cross - validation fashion
-    scores = cross_val_score(model, X, Y)
+    y_true, y_pred = [], []
 
-    # result is an average of all scores
-    score = np.mean(scores)
+    # iterate over all columns
+    for y in Y.T:
+        I = ~np.isnan(y) # select rows where outputs are not missing
+
+        yp = cross_val_predict(make_regressor(), X[I], y[I])
+
+        y_true.append(y[I])
+        y_pred.append(yp)
+
+    # compare the cross - validation predictions for all columns
+    score = r2_score(
+        np.concatenate(y_true),
+        np.concatenate(y_pred)
+    )
 
     return score
 
@@ -158,9 +168,10 @@ def all_1_to_1(concepts, prefix = None):
 
             Y = concepts[B]
 
+            # get score for estimation of non - missing values
             score = mapping_power(X, Y)
 
-            result.append([{A}, {B}, score])
+            result.append([[A], [B], score])
 
     return result
 
@@ -259,6 +270,6 @@ def all_n_to_1(concepts, prefix = None, discount=0.95, max_iter=32):
         found_concepts = inputs[np.array(solution.x)]
         found_concepts = set(found_concepts)
 
-        result.append([found_concepts, {B}, baseline*discount])
+        result.append([list(found_concepts), [B], baseline*discount])
 
     return result
