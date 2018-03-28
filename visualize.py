@@ -4,12 +4,15 @@ import os
 import json
 import pydot
 
-fpath = os.path.join('results', 'gender_discrimination.json')
+fpath = os.path.join('results', 'wiki.json')
+
+skip_w = 0.2
 
 # optional abbreviations json, which contains descriptions to concept abbreviations
 # set to None if no are available
-abbs = os.path.join('datasets', 'gender_discrimination_workplace.info')
+abbs = None
 if abbs:
+    abbs = os.path.join('datasets', 'gender_discrimination_workplace.info')
     abbs = json.load(open(abbs, 'r'))
 
 relations = json.load(open(fpath, 'r'))
@@ -20,6 +23,9 @@ graph_data = ["digraph {"]
 for A, B, w in relations:
     for a in A:
         for b in B:
+            if w < skip_w:
+                continue
+
             an, bn = a, b
 
             if abbs:
