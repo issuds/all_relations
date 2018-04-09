@@ -6,6 +6,8 @@ relations in the dataset.
 import numpy as np
 import pandas as ps
 from tqdm import tqdm
+#import bootstrapped.bootstrap as bs
+#import bootstrapped.stats_functions as bs_stats
 
 from sklearn.ensemble import GradientBoostingClassifier, GradientBoostingRegressor
 from sklearn.svm import SVC, SVR
@@ -118,16 +120,24 @@ def mapping_power(X, Y):
         y_true.append(y[I])
         y_pred.append(yp)
 
+    yt = np.concatenate(y_true)
+    yp = np.concatenate(y_pred)
+
+    # calculate bootstrap on rmsea
+    #n_iter, p = 1000000, 0.000001
+    #print(bs.bootstrap((yt-yp)**2, stat_func=bs_stats.mean, alpha=p, num_iterations=n_iter, iteration_batch_size=10000))
+    #print(bs.bootstrap((yt-np.mean(yt))**2, stat_func=bs_stats.mean, alpha=p, num_iterations=n_iter, iteration_batch_size=10000))
+
     # compare the cross - validation predictions for all columns
     score = r2_score(
-        np.concatenate(y_true),
-        np.concatenate(y_pred)
+        yt,
+        yp
     )
 
     return score
 
 
-def all_1_to_1(concepts, prefix = None):
+def all_1_to_1(concepts, prefix = None, bootstrap = False):
     """
     Finds all one to one relations within the set of concepts.
 
@@ -140,6 +150,11 @@ def all_1_to_1(concepts, prefix = None):
 
     prefix : array-like, shape = [n_samples, n_features]
         Features that apply to every concept.
+
+    bootstrap: int or None
+        Whether to repeat the mapping power estimation multiple times
+        with reduced dataset, in order to estimate the range of change
+        of power with different subsets of data.
 
 
     Returns
@@ -156,10 +171,12 @@ def all_1_to_1(concepts, prefix = None):
     result = []
 
     for A in tqdm(names):
-        print(A)
         for B in names:
+
             if A == B:
                 continue
+
+            print(A, "->", B)
 
             X = concepts[A]
 
@@ -169,10 +186,13 @@ def all_1_to_1(concepts, prefix = None):
             Y = concepts[B]
             Y = Y.astype('float')
 
+            local_result = [[A], [B]]
+
             # get score for estimation of non - missing values
             score = mapping_power(X, Y)
+            local_result.append(score)
 
-            result.append([[A], [B], score])
+            result.append(local_result)
 
     return result
 
