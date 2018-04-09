@@ -7,8 +7,8 @@ script_path = os.path.dirname(os.path.realpath(__file__))
 
 
 def read_gender_discrimination_dataset():
-    path = os.path.join(script_path, 'gender_discrimination_workplace.csv')
-    data = pd.read_csv(path, sep=';')
+    path = os.path.join(script_path, 'gender_discr_train.csv')
+    data = pd.read_csv(path)
 
     #data = data[np.random.rand(len(data)) < 0.05]
 

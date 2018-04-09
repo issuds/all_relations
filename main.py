@@ -3,20 +3,7 @@ Example usage of the api.
 Use it in command line regime.
 """
 
-import argparse
-
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument(
-        '--dataset', nargs="?", default='read_gender_discrimination_dataset',
-        type=str, help="Name of the dataset function to use form "
-                       "the __init__.py in 'datasets' folder")
-
-    parser.add_argument(
-        '--prefix', action='store_true', help="Whether to use descriptors of a person.")
-
-    args = parser.parse_args()
 
     import numpy as np
     import pandas as ps
@@ -39,7 +26,7 @@ if __name__ == "__main__":
     # sort from highest weight to the lowest weight
     relations.sort(reverse=True, key=lambda x: x[-1])
 
-    name = reader_func.__name__ + "_prefix.json"
+    name = "gender_disc_results.json"
 
     import os
     import json
