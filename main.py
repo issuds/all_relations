@@ -31,8 +31,7 @@ if __name__ == "__main__":
     concepts = pandas_to_concepts(survey)
 
     prefix = None
-    if args.prefix:
-        prefix = extra_data
+    prefix = extra_data
 
     # relations = all_n_to_1(concepts)
     relations = all_1_to_1(concepts, prefix=prefix)
@@ -40,7 +39,7 @@ if __name__ == "__main__":
     # sort from highest weight to the lowest weight
     relations.sort(reverse=True, key=lambda x: x[-1])
 
-    name = reader_func.__name__ + "_prefix" if prefix else "" + ".json"
+    name = reader_func.__name__ + "_prefix.json"
 
     import os
     import json
