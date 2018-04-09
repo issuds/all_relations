@@ -17,8 +17,8 @@ if __name__ == "__main__":
     survey, extra_data = read_gender_discrimination_dataset()
     concepts = pandas_to_concepts(survey)
 
-    prefix = None
     prefix = extra_data
+    prefix = None
 
     # relations = all_n_to_1(concepts)
     relations = all_1_to_1(concepts, prefix=prefix)

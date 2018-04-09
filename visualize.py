@@ -5,7 +5,7 @@ import json
 import pydot
 import pandas as pd
 
-fpath = os.path.join('results', 'read_gender_discrimination_dataset_prefix.json')
+fpath = os.path.join('results', 'gender_disc_results_no_prefix.json')
 
 skip_w = -100.0
 
