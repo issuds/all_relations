@@ -8,13 +8,32 @@ script_path = os.path.dirname(os.path.realpath(__file__))
 
 def read_gender_discrimination_dataset():
     path = os.path.join(script_path, 'gender_discrimination_workplace.csv')
-    data = pd.read_csv(path)
-    data = data.replace(8, np.nan)
-    data = data.replace(9, np.nan)
-    data = pd.DataFrame(data, dtype='float')
+    data = pd.read_csv(path, sep=';')
+
+    #data = data[np.random.rand(len(data)) < 0.05]
+
+    extra_data = data[['V1', 'PAYS', 'SEX', 'SexRec', 'YEAR']]
+
+    # one hot encoded values
+    dummies = pd.get_dummies(data['V3'])
+
+    extra_data = pd.concat([extra_data, dummies], axis=1)
+
+    survey = pd.DataFrame()
+    survey['Q1_1'] = data['Q1bRec']
+    survey['Q1_2'] = data['Q1cRec']
+    survey['Q2_1'] = data['Q2bRec']
+    survey['Q3_1'] = data['Q3aRec']
+    survey['Q3_2'] = data['Q3bRec']
+
+    # separate prefix vs actual survey data
     #I = np.random.rand(len(data)) < 0.1
     #data = data[I]
-    return data
+
+    survey = survey.replace(' ', np.nan)
+    extra_data = extra_data.replace(' ', np.nan)
+
+    return survey, extra_data
 
 
 def read_utaut():

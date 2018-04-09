@@ -167,6 +167,7 @@ def all_1_to_1(concepts, prefix = None):
                 X = np.column_stack([prefix, X])
 
             Y = concepts[B]
+            Y = Y.astype('float')
 
             # get score for estimation of non - missing values
             score = mapping_power(X, Y)
