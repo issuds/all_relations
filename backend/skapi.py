@@ -60,9 +60,18 @@ def pandas_to_concepts(data):
     return result
 
 
-def make_regressor():
+def make_regressor(subset=None):
     """
     Generate the necessary estimator model class for grid search.
+
+    Parameters
+    ----------
+
+    * subset [string, default=None]
+        Whether to use a named subset of model classes for fitting.
+        Feasible options are:
+        - None: use all the models available
+        - 'linear': use only linear models
 
     Returns
     -------
@@ -95,11 +104,16 @@ def make_regressor():
         'model__min_samples_split': [2 ** i for i in range(-20, -1)],
     }
 
+    spaces = [lasso, knn, gbrt, dectree]
+
+    if subset == "linear":
+        spaces = [lasso]
+
     # this class search over all parameter spaces for parameter
     # combination which yields the best validation loss
     model = GridSearchCV(
         estimator=estimator,
-        param_grid=[knn, lasso, gbrt, dectree], #
+        param_grid=[lasso, ], # knn, gbrt, dectree
         n_jobs=-1,
         verbose=0,
     )
@@ -107,7 +121,24 @@ def make_regressor():
     return model
 
 
-def mapping_power(X, Y):
+def mapping_power(X, Y, subset=None):
+    """
+    Evaluate the strength of relation from X to Y.
+
+    Parameters
+    ----------
+
+    * subset [string, default=None]
+        See same argument of the make_regressor function.
+    * X [np.ndarray, shape=(n_samples, n_features)]
+        Array of input concept observations. Missing values
+        are denoted with nan's.
+
+    Returns
+    -------
+    model: GridSearchCV instance, estimator class that can be applied
+        to features to learn the relationship.
+    """
     # evaluate all the models in cross - validation fashion
     y_true, y_pred = [], []
 
@@ -115,7 +146,7 @@ def mapping_power(X, Y):
     for y in Y.T:
         I = ~np.isnan(y) # select rows where outputs are not missing
 
-        yp = cross_val_predict(make_regressor(), X[I], y[I])
+        yp = cross_val_predict(make_regressor(subset), X[I], y[I])
 
         y_true.append(y[I])
         y_pred.append(yp)
