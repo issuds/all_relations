@@ -5,7 +5,7 @@ import json
 import pydot
 import pandas as pd
 
-fpath = os.path.join('results', 'gender_disc_results_no_prefix.json')
+fpath = os.path.join('results', 'gender_disc_test.json')
 
 skip_w = -100.0
 
