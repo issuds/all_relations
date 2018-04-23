@@ -10,7 +10,7 @@ def read_gender_discrimination_dataset():
     path = os.path.join(script_path, 'gender_discr_train.csv')
     data = pd.read_csv(path)
 
-    data = data[np.random.rand(len(data)) < 0.1]
+    #data = data[np.random.rand(len(data)) < 0.1]
 
     extra_data = data[['V1', 'PAYS', 'SEX', 'SexRec', 'YEAR']]
 

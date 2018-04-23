@@ -60,15 +60,15 @@ def pandas_to_concepts(data):
     return result
 
 
-def make_regressor(subset=None):
+def make_regressor(model_subset=None):
     """
     Generate the necessary estimator model class for grid search.
 
     Parameters
     ----------
 
-    * subset [string, default=None]
-        Whether to use a named subset of model classes for fitting.
+    * model_subset [string, default=None]
+        Whether to use a named model_subset of model classes for fitting.
         Feasible options are:
         - None: use all the models available
         - 'linear': use only linear models
@@ -106,7 +106,7 @@ def make_regressor(subset=None):
 
     spaces = [lasso, knn, gbrt, dectree]
 
-    if subset == "linear":
+    if model_subset == "linear":
         spaces = [lasso]
 
     # this class search over all parameter spaces for parameter
@@ -121,14 +121,14 @@ def make_regressor(subset=None):
     return model
 
 
-def mapping_power(X, Y, subset=None):
+def mapping_power(X, Y, models_subset=None):
     """
     Evaluate the strength of relation from X to Y.
 
     Parameters
     ----------
 
-    * subset [string, default=None]
+    * models_subset [string, default=None]
         See same argument of the make_regressor function.
     * X [np.ndarray, shape=(n_samples, n_features)]
         Array of input concept observations. Missing values
@@ -146,7 +146,7 @@ def mapping_power(X, Y, subset=None):
     for y in Y.T:
         I = ~np.isnan(y) # select rows where outputs are not missing
 
-        yp = cross_val_predict(make_regressor(subset), X[I], y[I])
+        yp = cross_val_predict(make_regressor(models_subset), X[I], y[I])
 
         y_true.append(y[I])
         y_pred.append(yp)
@@ -168,7 +168,7 @@ def mapping_power(X, Y, subset=None):
     return score
 
 
-def all_1_to_1(concepts, prefix = None, bootstrap = False):
+def all_1_to_1(concepts, prefix = None, models_subset = None):
     """
     Finds all one to one relations within the set of concepts.
 
@@ -182,10 +182,10 @@ def all_1_to_1(concepts, prefix = None, bootstrap = False):
     prefix : array-like, shape = [n_samples, n_features]
         Features that apply to every concept.
 
-    bootstrap: int or None
-        Whether to repeat the mapping power estimation multiple times
-        with reduced dataset, in order to estimate the range of change
-        of power with different subsets of data.
+    models_subset: string or None
+        Whether to use a subset of models for estimation of mapping
+        power. For feasible options, see the similar parameter of
+        the `mapping_power` function.
 
 
     Returns
@@ -220,7 +220,7 @@ def all_1_to_1(concepts, prefix = None, bootstrap = False):
             local_result = [[A], [B]]
 
             # get score for estimation of non - missing values
-            score = mapping_power(X, Y)
+            score = mapping_power(X, Y, models_subset=models_subset)
             local_result.append(score)
 
             result.append(local_result)

@@ -16,13 +16,13 @@ if __name__ == "__main__":
 
     survey, extra_data = read_gender_discrimination_dataset()
     concepts = pandas_to_concepts(survey)
-    concepts = {c:concepts[c] for c in ['Q1_', 'Q3_']}
+    #concepts = {c:concepts[c] for c in ['Q1_', 'Q3_']}
 
     prefix = extra_data
     prefix = None
 
     # relations = all_n_to_1(concepts)
-    relations = all_1_to_1(concepts, prefix=prefix, bootstrap=32)
+    relations = all_1_to_1(concepts, prefix=prefix, models_subset='linear')
 
     # sort from highest weight to the lowest weight
     relations.sort(reverse=True, key=lambda x: x[-1])
