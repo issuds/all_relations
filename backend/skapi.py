@@ -92,8 +92,10 @@ def make_regressor(model_subset=None):
             'model__alpha': [10 ** i for i in np.linspace(-6, 6, 11)],
         },
         "ann": {
-            'model': [MLPRegressor(solver='lbfgs')],
-            'model__hidden_layer_sizes': [[n_neurons for _ in range(n_layers)] for n_neurons in [4, 16, 64, 256] for n_layers in [1, 2]]
+            'model': [MLPRegressor(solver='adam')],
+            'model__hidden_layer_sizes': [[n_neurons for _ in range(n_layers)] for n_neurons in [128, 64, 32, 16] for n_layers in [2, 1]],
+            'model__max_iter': [32, 16, 8],
+            'model__learning_rate_init': [0.0001, 0.001]
         },
         "knn": {
             'model': [KNeighborsRegressor()],
@@ -103,14 +105,15 @@ def make_regressor(model_subset=None):
             'model': [GradientBoostingRegressor()],
             'model__n_estimators': [2 ** i for i in range(1, 9)],
             'model__learning_rate': [2 ** i for i in range(-10, 0)],
+        },
+        "tree" : {
+            'model': [DecisionTreeRegressor()],
+            'model__max_depth': range(1, 20),
+            'model__min_samples_split': [2 ** i for i in range(-20, -1)],
         }
     }
 
-    dctree = {
-        'model': [DecisionTreeRegressor()],
-        'model__max_depth': range(1, 20),
-        'model__min_samples_split': [2 ** i for i in range(-20, -1)],
-    }
+    
     
     # user can specify subset of models to be used
     if model_subset is None:
@@ -126,7 +129,7 @@ def make_regressor(model_subset=None):
         estimator=estimator,
         param_grid=spaces, # knn, gbrt, dectree
         n_jobs=-1,
-        verbose=1,
+        verbose=1000,
     )
 
     return model
