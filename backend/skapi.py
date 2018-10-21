@@ -129,7 +129,7 @@ def make_regressor(model_subset=None):
         estimator=estimator,
         param_grid=spaces, # knn, gbrt, dectree
         n_jobs=-1,
-        verbose=1000,
+        verbose=1,
     )
 
     return model
