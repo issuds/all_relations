@@ -15,6 +15,7 @@ from sklearn.svm import LinearSVC, LinearSVR
 from sklearn.linear_model import Lasso
 from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
 from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
+from sklearn.neural_network import MLPRegressor
 from sklearn.dummy import DummyClassifier, DummyRegressor
 from sklearn.metrics import r2_score
 
@@ -85,37 +86,47 @@ def make_regressor(model_subset=None):
     ])
 
     # search spaces for different model classes
-    gbrt = {
-        'model': [GradientBoostingRegressor()],
-        'model__n_estimators': [2 ** i for i in range(1, 9)],
-        #'model__learning_rate': [2 ** i for i in range(-10, 0)],
+    model_choices = {
+        "lasso": {
+            'model': [Lasso()],
+            'model__alpha': [10 ** i for i in np.linspace(-6, 6, 11)],
+        },
+        "ann": {
+            'model': [MLPRegressor(solver='lbfgs')],
+            'model__hidden_layer_sizes': [[n_neurons for _ in range(n_layers)] for n_neurons in [4, 16, 64, 256] for n_layers in [1, 2]]
+        },
+        "knn": {
+            'model': [KNeighborsRegressor()],
+            'model__n_neighbors': range(1, 100, 5),
+        },
+        "gbrt": {
+            'model': [GradientBoostingRegressor()],
+            'model__n_estimators': [2 ** i for i in range(1, 9)],
+            'model__learning_rate': [2 ** i for i in range(-10, 0)],
+        }
     }
-    lasso = {
-        'model': [Lasso()],
-        'model__alpha': [10 ** i for i in np.linspace(-6, 6, 11)],
-    }
-    knn = {
-        'model': [KNeighborsRegressor()],
-        'model__n_neighbors': range(1, 100, 5),
-    }
-    dectree = {
+
+    dctree = {
         'model': [DecisionTreeRegressor()],
         'model__max_depth': range(1, 20),
         'model__min_samples_split': [2 ** i for i in range(-20, -1)],
     }
+    
+    # user can specify subset of models to be used
+    if model_subset is None:
+        choices = model_choices.keys()
+    else:
+        choices = model_subset
 
-    spaces = [lasso, knn, gbrt, dectree]
-
-    if model_subset == "linear":
-        spaces = [lasso]
+    spaces = [model_choices[k] for k in choices]
 
     # this class search over all parameter spaces for parameter
     # combination which yields the best validation loss
     model = GridSearchCV(
         estimator=estimator,
-        param_grid=[lasso, ], # knn, gbrt, dectree
+        param_grid=spaces, # knn, gbrt, dectree
         n_jobs=-1,
-        verbose=0,
+        verbose=1,
     )
 
     return model

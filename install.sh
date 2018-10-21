@@ -6,3 +6,4 @@ pip3 install pandas
 pip3 install scikit-learn
 pip3 install scikit-optimize
 pip3 install tqdm
+pip3 install docopt
