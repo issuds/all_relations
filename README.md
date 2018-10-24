@@ -1,4 +1,4 @@
-# Automated extraction of SEM structures
+# Data-Driven, Statistical Learning Method for Automatically Extracting Path Models
 
 This software is a supplement to following publications: 
 
