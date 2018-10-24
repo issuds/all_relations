@@ -1,27 +1,44 @@
-# Data-Driven, Statistical Learning Method for Automatically Extracting Path Models
+# Automated extraction of SEM structures
 
-This code can be used to determine weights for every pair of relations between given set of concepts which describe the strength of relation.
+This software is a supplement to following publications: 
 
-## Installation and dependencies
+[ER18] Maass, W. & Shcherbatyi, I. Inductive Discovery By Machine Learning for Identification of Structural Models, The 37th International Conference on Conceptual Modeling (ER), 2018. 
 
-We offer two ways to install and use the code: using docker container or via installation of all dependencies on your system.
-If you are not too familiar with python and pycharm or if you use Windows, it is advised that you use docker based installation. 
+[HICSS17] Maass, W. & Shcherbatyi, I. Data-Driven, Statistical Learning Method for Inductive Confirmation of Structural Models, Hawaii International Conference on System Sciences (HICSS), 2017. 
 
-### Installation using docker
+### Requirements
 
-Please follow the instructions here:
-https://hub.docker.com/r/ed3s/all-relations/
+Python 3 is recommended to run the code. 
+If something does not work on python 2 leat us know. 
+You require the following packages to be installed on your system: 
+`numpy`, `scipy`, `pandas` `scikit-learn`, `scikit-optimize`, `tqdm`. 
 
-### Installation on your system
+### Installation on Ubuntu
 
-Please note: installation that can use artificial neural networks is not possible on Windows, as currently [tensorflow](https://www.tensorflow.org/) necessary to run such ann currently (September 2016) does not support Windows. 
+Open a terminal. In the terminal, navigate to the folder of the repository.
+When in the folder, run following commands:
+
+```bash
+pip3 install -e .
+```
+
+This will install necessary python dependencies on your system. In order
+to install necessary software for rendering of relations, use
+```bash
+bash install_dependencies_ubuntu.sh
+```
+
+If you also wish to install Pycharm IDE to use as GUI python editor, run the 
+following command in the folder of the repository:
+```bash
+bash pycharm.sh
+```
+
+### Installation on MacOS
 
 1. Install [Anaconda python distribution](https://www.continuum.io/downloads).
 2. Open terminal in Anaconda Navigator and update conda: condo update conda
 3. Create New Environment with a name "condaenv" (choose your name), Python option and version 2.7; import package pandas 
-4. Install [Tensorflow](https://www.tensorflow.org/): Open terminal in Anaconda Navigator, and type 
-`conda install -c jjhelmus tensorflow=0.10.0rc0` (`--name condaenv` if you install in a specific environment)
-If you are on Windows, you can skip this step, however ANNs  will not work.
 5. Clone or download this repository in some folder. 
 6. Install [PyCharm IDE](https://www.jetbrains.com/pycharm/)
 7. Open PyCharm IDE. Go to "File > Open" and choose to open the folder with source code from repository. 
@@ -29,28 +46,49 @@ Open File>Default Settings>Project Interpreter ; select project interpreter by t
 
 ## Running the code
 
-Python script "main.py" can be used to run the code with your own data, provided that the data is in the compatible format. See "main.py" for further details. Simply run the script after you checked out the repository to run the code on the data used in our paper.
+Python script in the root folder of the repository can be used to reproduce results in the 
+ER18 and HICSS17 publications. These do not require any configuration to run beyond 
+installation of necessary dependencies. For example, to reproduce results for ER18
+publication, run in terminal or execute in PyCharm
 
-## Data format for your own datasets
+```bash
+python3 er18_reproduce.py
+```
 
-See examples in "dataset" folder. Accepted data format is csv file, which has columns in the following format:
+For example datasets used, see `datasets` folder.
 
-A1, A2, ... AN, B1, B2, ... BN, C1 ...
+In order to use your own dataset, you first need to make sure that your dataset is in 
+Comma Separated Value format (.csv). Secondly, you need to make sure that the columns
+have a proper name format. The names of the columns should be given in the dataset, as 
+they define the set of concepts, and what is considered a feature. In particular,
+every column should be named as follows:
 
-where A, B, C ... are names of concepts, and by numbers 1, 2, ... are denoted features for a given concept.
+[concept]_[id],
 
-For example, for two concepts A and B, where A has 2 features, and B has 3 features, the dataset csv would look as follows:
+where concept denotes the name of the concept,
+and id denotes a particular indicator for a concept.
+Underscores are not allowed in name or id, and can
+break the program if present.
+User features are specified using two special names
+for concepts:
+- respnum: numerical feature describing respondent
+- respcat: categorical feature describing respondent
 
-| A1 | A2 | B1 | B2 | B3 |
-|----|----|----|----|----|
-| 0  | 1  | 0  | 1  | 2  |
-| 3  | 0  | 2  | 3  | 0  |
-| 2  | 0  | 2  | 1  | 2  |
-| 1  | 3  | 2  | 0  | 1  |
-| 2  | 3  | 0  | 1  | 2  |
+Example dataset is given below:
+        
+|respnum_Age | respcat_edu | Q1_a | Q1_b | Q2_a |
+|------------|-------------|------|------|------|
+|25          | College     | 1    | 2    | 5    |
+|34          | University  | 2    | 3    | 4    |
+
+Missing values are handled automatically and should not require
+any manual preprocessing. Missing values are considered to be one
+of ['', ' ', '?', 'NaN'].
 
 ## Structure of results
 
-Results are stored in the `results_folder` specified in the main.py. The structure of results is as follows: for every class of predictive models considered, the file "\[datasetname\]\_\[model\_class\].csv" is created, where the contents of csv file contain matrix with weights of strength relation between every pair of relations. 
-
-In addition, `matrix.csv` contains average values of strength in matrix format, and ranking.csv contains list of one to one relations sorted by average relation strength. The file `for_evaluation.csv` contains data that was not used for the relation strength extraction and can be used for further verification of extracted model. The file `dataset.csv` contains original dataset. 
+Results from the papers are stored in the `experimental_results` folder. 
+You can load and print the results using the `allrelations.visualization`
+functions (see docstrings). In particular, `render_relations` function
+allows to convert JSON representation of results into visual graph form
+and a csv table.
