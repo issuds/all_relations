@@ -78,7 +78,7 @@ def preprocess_dataset(dataframe, missing_values =('', ' ', '?', 'NaN')):
             )
 
         concept = cname.split("_")[0]
-        column = dataframe[concept]
+        column = dataframe[cname]
 
         if concept == 'respcat':
             # one hot encode the categories
@@ -89,13 +89,18 @@ def preprocess_dataset(dataframe, missing_values =('', ' ', '?', 'NaN')):
             # in sklearn, np.nan is missing value
             column = column.replace(empty, np.nan)
 
+        column = column.values  # convert to numpy array
+
         if concept == 'respnum':
-            respdata.append(column.values)
+            respdata.append(column)
             continue
 
-        concepts.get(cname, []).append(column)
+        if concept in concepts:
+            concepts[concept].append(column)
+        else:
+            concepts[concept] = [column]
 
-    concepts = {np.column_stack(c) for c in concepts}
+    concepts = {k: np.column_stack(v) for k, v in concepts.items()}
     respdata = np.column_stack(respdata) if respdata else None
     return concepts, respdata
 
@@ -327,8 +332,6 @@ def concept_subset(concepts, names, prefix = None):
 
     result = np.column_stack(selection)
     return result
-
-
 
 
 def all_n_to_1(concepts, prefix = None, discount=0.95, max_iter=32):

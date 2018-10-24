@@ -29,57 +29,15 @@ Options:
 
 """
 
-import pandas as pd
-import os
-
-from allrelations.skapi import preprocess_dataset, all_1_to_1
-from allrelations.visualization import render_relations
-
+from allrelations.interface import extract_1_to_1
 from docopt import docopt
 
-
-def main():
+if __name__ == "__main__":
     arguments = docopt(__doc__, version='Oct 2018, ER18')
 
-    dataset = arguments['--dataset=<file>']
-    model = arguments['--model=<class>']
-    saveto = arguments['--saveto=<folder>']
-    userfeatures = arguments['--userfeatures']
-
-    # read the CSV file of the dataset
-    data = pd.read_csv(dataset)
-
-    # separate dataset into concepts and user information
-    concepts, respdata = preprocess_dataset(data)
-
-    if not userfeatures:
-        respdata = None  # ignore respondent data if required
-
-    # extract all 1 to 1 relations
-    relations = all_1_to_1(concepts, prefix=respdata, models_subset=model)
-
-    # name of dataset without .csv at the end
-    dfname = os.path.basename(dataset)
-    if dfname.endswith('.csv'):
-        dfname = dfname[:-4]
-
-    # output name: dataset file name + model name [+ userfeatures] .json
-    result_name = dfname + '_' + model
-    if userfeatures:
-        result_name += '_userfeatures'
-
-    result_path = os.path.join(saveto, result_name + '.json')
-
-    import json
-
-    json.dump(
-        relations,
-        open(os.path.join('results', result_path+'.json'), 'w'),
-        indent=2,
+    extract_1_to_1(
+        dataset = arguments['--dataset=<file>'],
+        model = arguments['--model=<class>'],
+        saveto = arguments['--saveto=<folder>'],
+        use_resp_data= arguments['--userfeatures']
     )
-
-    render_relations(result_path)
-
-
-if __name__ == "__main__":
-    main()

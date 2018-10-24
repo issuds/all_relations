@@ -1,4 +1,4 @@
-V1,V3,PAYS,SEX,AGE,SexRec,Q1bRec,Q1cRec,Q2bRec,Q3aRec,Q3bRec,YEAR
+respnum_V1,respcat_V3,respnum_PAYS,respnum_SEX,respnum_AGE,respnum_SexRec,Motherhood myths_Q1b,Motherhood myths_Q1c,Sexism_Q2b,Opposition to women's career_Q3a,Opposition to women's career_Q3b,respnum_YEAR
 5900,40,1,2,24,1,4,5,5,3,3,2012
 5900,40,1,2,30,1,4,4,5,3,2,2012
 5900,40,1,1,32,-1,2,4,2,2,2,2012
