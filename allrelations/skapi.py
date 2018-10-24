@@ -1,31 +1,104 @@
 """
-Scikit - learn based api for estimation of all 1 -> 1 or n -> 1
+Scikit-Learn based api for estimation of all 1 -> 1 or n -> 1
 relations in the dataset.
 """
 
 import numpy as np
-import pandas as ps
+import pandas as pd
 from tqdm import tqdm
-#import bootstrapped.bootstrap as bs
-#import bootstrapped.stats_functions as bs_stats
 
-from sklearn.ensemble import GradientBoostingClassifier, GradientBoostingRegressor
-from sklearn.svm import SVC, SVR
-from sklearn.svm import LinearSVC, LinearSVR
+from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.linear_model import Lasso
-from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
-from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
+from sklearn.neighbors import KNeighborsRegressor
+from sklearn.tree import DecisionTreeRegressor
 from sklearn.neural_network import MLPRegressor
-from sklearn.dummy import DummyClassifier, DummyRegressor
 from sklearn.metrics import r2_score
 
-from sklearn.preprocessing import RobustScaler, StandardScaler, Imputer
-from sklearn.pipeline import Pipeline, make_pipeline, make_union
-from sklearn.model_selection import GridSearchCV, cross_val_score, cross_val_predict
+from sklearn.preprocessing import StandardScaler, Imputer
+from sklearn.pipeline import Pipeline
+from sklearn.model_selection import GridSearchCV, cross_val_predict
 
 from skopt import gp_minimize
-
 from string import digits
+
+
+def preprocess_dataset(dataframe, missing_values =('', ' ', '?', 'NaN')):
+    """
+    Converts pandas dataframe representing a dataset
+    to a set of concepts, as well as to additional
+    respondent information if such information is given.
+
+    Parameters
+    ----------
+    dataframe: DataFrame, contains the dataset to be processed.
+        The names of the columns should be given in the
+        dataset, as they define the set of concepts,
+        and what is considered a feature. In particular,
+        every column should be named as follows:
+        [concept]_[id],
+        where concept denotes the name of the concept,
+        and id denotes a particular indicator for a concept.
+        Underscores are not allowed in name or id, and can
+        break the program if present.
+        User features are specified using two special names
+        for concepts:
+        - respnum: numerical feature describing respondent
+        - respcat: categorical feature describing respondent
+        Example dataset is given below:
+        respnum_age | respcat_edu | Q1_a | Q1_b | Q2_a |
+        ------------|-------------|------|------|------|
+        25          | College     | 1    | 2    | 5    |
+        34          | University  | 2    | 3    | 4    |
+
+    missing_values: tuple of string
+        Describes possibilities for missing values. If in your
+        dataset missing values are represented different from
+        the defaults, specify your own values.
+
+    Returns
+    -------
+    result: concepts, respdata
+        - concepts: dictionary of numpy arrays, where every
+        numpy array contains indicator values for a single
+        concept.
+        - respdata: dictionary with additional data about
+        respondent. Such data is a numpy array with
+        numerical values of respondent features, and one
+        hot encoded values of the categorical values.
+    """
+
+    concepts = {}
+    respdata = []
+
+    for cname in dataframe.columns:
+        if not '_' in cname:
+            raise ValueError(
+                'Expected dataset with column names in the format'
+                '[concept]_[indicator], but got %s' % cname
+            )
+
+        concept = cname.split("_")[0]
+        column = dataframe[concept]
+
+        if concept == 'respcat':
+            # one hot encode the categories
+            respdata.append(pd.get_dummies(column).values)
+            continue
+
+        for empty in missing_values:
+            # in sklearn, np.nan is missing value
+            column = column.replace(empty, np.nan)
+
+        if concept == 'respnum':
+            respdata.append(column.values)
+            continue
+
+        concepts.get(cname, []).append(column)
+
+    concepts = {np.column_stack(c) for c in concepts}
+    respdata = np.column_stack(respdata) if respdata else None
+    return concepts, respdata
+
 
 def pandas_to_concepts(data):
     """
@@ -42,7 +115,7 @@ def pandas_to_concepts(data):
 
     result = {}
 
-    if not isinstance(data, ps.DataFrame):
+    if not isinstance(data, pd.DataFrame):
         raise ValueError("Parameter data should be of type DataFrame.")
 
     for c in data.columns:
@@ -182,7 +255,7 @@ def mapping_power(X, Y, models_subset=None):
     return score
 
 
-def all_1_to_1(concepts, prefix = None, models_subset = None):
+def all_1_to_1(concepts, prefix=None, models_subset=None):
     """
     Finds all one to one relations within the set of concepts.
 
@@ -238,6 +311,10 @@ def all_1_to_1(concepts, prefix = None, models_subset = None):
             local_result.append(score)
 
             result.append(local_result)
+
+
+    # sort from highest weight to the lowest weight
+    result.sort(reverse=True, key=lambda x: x[-1])
 
     return result
 

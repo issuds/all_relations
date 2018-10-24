@@ -1,4 +1,10 @@
-# All relations v2.0
+# Automated extraction of SEM structure
+
+This software is a supplement to following publications: 
+
+* Maass, W. & Shcherbatyi, I. Inductive Discovery By Machine Learning for Identification of Structural Models, The 37th International Conference on Conceptual Modeling (ER), 2018. 
+
+* Maass, W. & Shcherbatyi, I. Data-Driven, Statistical Learning Method for Inductive Confirmation of Structural Models, Hawaii International Conference on System Sciences (HICSS), 2017. 
 
 ### Requirements
 
