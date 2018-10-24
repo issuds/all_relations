@@ -18,7 +18,6 @@ from sklearn.preprocessing import StandardScaler, Imputer
 from sklearn.pipeline import Pipeline
 from sklearn.model_selection import GridSearchCV, cross_val_predict
 
-from skopt import gp_minimize
 from string import digits
 
 
@@ -367,6 +366,7 @@ def all_n_to_1(concepts, prefix = None, discount=0.95, max_iter=32):
         0.0 is worst, 1.0 is best.
 
     """
+    from skopt import gp_minimize
 
     names = set(concepts.keys())
     result = []
