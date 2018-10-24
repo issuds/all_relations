@@ -11,7 +11,14 @@ This software is a supplement to following publications:
 Python 3 is recommended to run the code. 
 If something does not work on python 2 leat us know. 
 You require the following packages to be installed on your system: 
-`numpy`, `scipy`, `pandas` `scikit-learn`, `scikit-optimize`, `tqdm`. 
+
+'pydot',
+'scikit-learn==0.19.2',
+'numpy',
+'scipy',
+'pandas',
+'tqdm',
+'docopt'. 
 
 ### Installation on Ubuntu
 
