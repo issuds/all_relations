@@ -68,7 +68,3 @@ def render_relations(results_json, min_weight_edge=0.0):
     idx = ["From " + v for v in idx]
     dataframe.index = idx
     dataframe.to_csv(fpath + '.csv')
-
-
-if __name__ == "__main__":
-    render('gender_disc_results.json')
