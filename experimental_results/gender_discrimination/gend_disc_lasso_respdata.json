@@ -1,21 +1,12 @@
 [
   [
     [
-      "Motherhood myths"
-    ],
-    [
-      "Opposition to women's career"
-    ],
-    0.28494577304878554
-  ],
-  [
-    [
       "Sexism"
     ],
     [
       "Opposition to women's career"
     ],
-    0.25642791466040404
+    0.21682427076951505
   ],
   [
     [
@@ -24,7 +15,7 @@
     [
       "Sexism"
     ],
-    0.22947474479549268
+    0.20961454627116294
   ],
   [
     [
@@ -33,16 +24,16 @@
     [
       "Motherhood myths"
     ],
-    0.18887501397697748
+    0.1956956975682249
   ],
   [
     [
-      "Opposition to women's career"
+      "Motherhood myths"
     ],
     [
-      "Sexism"
+      "Opposition to women's career"
     ],
-    0.07079013557985503
+    0.19106919612674766
   ],
   [
     [
@@ -51,6 +42,15 @@
     [
       "Motherhood myths"
     ],
-    0.03715823978393229
+    0.08586463672637157
+  ],
+  [
+    [
+      "Opposition to women's career"
+    ],
+    [
+      "Sexism"
+    ],
+    -0.023920311056911725
   ]
 ]
