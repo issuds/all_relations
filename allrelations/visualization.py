@@ -5,7 +5,7 @@ import pydot
 import pandas as pd
 
 
-def render_relations(results_json, min_weight_edge=0.0):
+def render_relations(results_json, min_weight_edge=None):
     """
     Converts obtained set of relations to CSV and to .SVG formats,
     for ease of comprehension. The .csv and .svg files are stored
@@ -18,9 +18,10 @@ def render_relations(results_json, min_weight_edge=0.0):
     results_json: str
         Path where the results json is stored.
 
-    min_weight_edge: float
+    min_weight_edge: float or None
         Minimum value of the edge weight, at which to visualize
-        the edges of the relations graph.
+        the edges of the relations graph. If None, no edges are
+        ignored.
     """
 
     relations = json.load(open(results_json, 'r'))
@@ -42,8 +43,8 @@ def render_relations(results_json, min_weight_edge=0.0):
                 dataframe.at[an, bn] = w
 
                 # skip the weights which are too small
-                if w < min_weight_edge:
-                    continue
+                if (min_weight_edge is not None) and (w < min_weight_edge):
+                        continue
 
                 line = '"%s" -> "%s"[label="%s"]' % (an, bn, w)
                 graph_data.append(line)
