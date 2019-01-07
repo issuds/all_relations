@@ -29,7 +29,7 @@ def preprocess_dataset(dataframe, missing_values =('', ' ', '?', 'NaN')):
 
     Parameters
     ----------
-    dataframe: DataFrame, contains the dataset to be processed.
+    dataframe: pandas.DataFrame, contains the dataset to be processed.
         The names of the columns should be given in the
         dataset, as they define the set of concepts,
         and what is considered a feature. In particular,
@@ -64,6 +64,7 @@ def preprocess_dataset(dataframe, missing_values =('', ' ', '?', 'NaN')):
         respondent. Such data is a numpy array with
         numerical values of respondent features, and one
         hot encoded values of the categorical values.
+        If no respondent data is available, null is returned.
     """
 
     concepts = {}
@@ -106,7 +107,10 @@ def preprocess_dataset(dataframe, missing_values =('', ' ', '?', 'NaN')):
 
 def pandas_to_concepts(data):
     """
-    Converts pandas dataframe to set of all concepts.
+    Converts pandas dataframe to a set of all concepts.,
+    represented as a dictionary with keys being concept
+    names, and values being numpy array of indicators of
+    a concept.
 
     Parameters
     ----------
@@ -189,8 +193,6 @@ def make_regressor(model_subset=None):
             'model__min_samples_split': [2 ** i for i in range(-20, -1)],
         }
     }
-
-    
     
     # user can specify subset of models to be used
     if model_subset is None:
@@ -224,11 +226,15 @@ def mapping_power(X, Y, models_subset=None):
     * X [np.ndarray, shape=(n_samples, n_features)]
         Array of input concept observations. Missing values
         are denoted with nan's.
+    * Y [np.ndarray, shape=(n_samples, n_features)]
+        Array of output concept observations. Missing values
+        are denoted with nan's.
 
     Returns
     -------
-    model: GridSearchCV instance, estimator class that can be applied
-        to features to learn the relationship.
+    score: A value in the range [-inf, 1.0] that indicates how
+        well the target values can be estimated from the input
+        observations.
     """
     # evaluate all the models in cross - validation fashion
     y_true, y_pred = [], []
@@ -237,6 +243,13 @@ def mapping_power(X, Y, models_subset=None):
     for y in Y.T:
         I = ~np.isnan(y) # select rows where outputs are not missing
 
+        # Nested cross validation is used to essentailly use the whole dataset as
+        # a testing set. For more details refer to 
+        # * Cawley, G.C.; Talbot, N.L.C. On over-fitting in model selection and
+        # subsequent selection bias in performance evaluation. J. Mach. Learn. 
+        # Res 2010,11, 2079-2107.
+        # or
+        # https://scikit-learn.org/stable/auto_examples/model_selection/plot_nested_cross_validation_iris.html
         yp = cross_val_predict(make_regressor(models_subset), X[I], y[I])
 
         y_true.append(y[I])
@@ -244,11 +257,6 @@ def mapping_power(X, Y, models_subset=None):
 
     yt = np.concatenate(y_true)
     yp = np.concatenate(y_pred)
-
-    # calculate bootstrap on rmsea
-    #n_iter, p = 1000000, 0.000001
-    #print(bs.bootstrap((yt-yp)**2, stat_func=bs_stats.mean, alpha=p, num_iterations=n_iter, iteration_batch_size=10000))
-    #print(bs.bootstrap((yt-np.mean(yt))**2, stat_func=bs_stats.mean, alpha=p, num_iterations=n_iter, iteration_batch_size=10000))
 
     # compare the cross - validation predictions for all columns
     score = r2_score(
@@ -278,7 +286,6 @@ def all_1_to_1(concepts, prefix=None, models_subset=None):
         power. For feasible options, see the similar parameter of
         the `mapping_power` function.
 
-
     Returns
     -------
     result : array of [set a, set b, float]
@@ -286,7 +293,6 @@ def all_1_to_1(concepts, prefix=None, models_subset=None):
         set b can be estimated from single concept in set a. All
         combinations of single concepts are considered. The value
         of float represents how well the concept can be estimated.
-
     """
 
     names = concepts.keys()
@@ -316,7 +322,6 @@ def all_1_to_1(concepts, prefix=None, models_subset=None):
 
             result.append(local_result)
 
-
     # sort from highest weight to the lowest weight
     result.sort(reverse=True, key=lambda x: x[-1])
 
@@ -335,7 +340,8 @@ def concept_subset(concepts, names, prefix = None):
 
 def all_n_to_1(concepts, prefix = None, discount=0.95, max_iter=32):
     """
-    Finds all one to one relations within the set of concepts.
+    Finds all one to one relations within the set of concepts. Requires
+    Scikit-Optimize to be installed on your system.
 
     Parameters
     ----------
@@ -359,7 +365,7 @@ def all_n_to_1(concepts, prefix = None, discount=0.95, max_iter=32):
     -------
     result : array of [set a, set b, float]
         Returns estimate of test accuracy for how single concept in
-        set b can be estimated from minimum set of all concepts (set a)
+        set b can be estimated from minimal set of all concepts (set a)
         such that the total accuracy is not worse than discount*100%
         compared to when all concepts are used.
         The value of float represents how well the concept can be estimated -
